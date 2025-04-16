@@ -1,0 +1,454 @@
+ ****** HSPICE -- P-2019.06-SP1-1 win64 (Sep 27 2019) ******                    
+  Copyright (c) 1986 - 2024 by Synopsys, Inc. All Rights Reserved.              
+  This software and the associated documentation are proprietary
+  to Synopsys, Inc. This software may only be used in accordance
+  with the terms and conditions of a written license agreement with
+  Synopsys, Inc. All other use, reproduction, or distribution of
+  this software is strictly prohibited.
+  Input File: C:\Users\user\Otimizador_v6c\Circuits\Audio\Power_Amp_01\circuito.
+  Command line options: C:\Synopsys\Hspice_P-2019.06-SP1-1\WIN64\hspice.com -i C:\Users\user\Otimizador_v6c\Circuits\Audio\Power_Amp_01\circuito.sp -o C:\Users\user\Otimizador_v6c\Circuits\Audio\Power_Amp_01\circuito
+  Start time: Tue Jan 23 15:31:49 2024
+  lic:  
+  lic: FLEXlm: SDK_12.3 
+  lic: USER:   user                 HOSTNAME: DESKTOP-9P37Q74 
+  lic: HOSTID: "00155df8c3bb"       PID:      17236 
+  lic: Using FLEXlm license file: 
+  lic: 27000@DESKTOP-9P37Q74 
+  lic: Checkout 1 hspice 
+  lic: License/Maintenance for hspice will expire on 30-dec-2030/2020.12 
+  lic: 1(in_use)/99(total) FLOATING license(s) on SERVER 27000@DESKTOP-9P37Q74 
+  lic:   
+  **warning** (C:\Users\user\Otimizador_v6c\Circuits\Audio\Power_Amp_01\circuito.sp:118) Inductance for the inductor l1 >= 0.1 henry, please verify it.
+  **warning** For .option genk=1, 0 implicit mutual inductors are generated!
+
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 1         bypass  = 2.0000000000  
+FFT analysis is detected and FFT_ACCURATE is turned on automatically to improve accuracy. 
+To disable FFT_ACCURATE, set .OPTION FFT_ACCURATE=0.
+1****** HSPICE -- P-2019.06-SP1-1 win64 (Sep 27 2019) ******                    
+ ******  
+ ***amplificador de potencia valvulado
+
+ ****** operating point information tnom=  25.000 temp=  25.000 ******
+ ****** operating point status is all       simulation time is     0.           
+    node    =voltage            node    =voltage
+
+ +0:in      =   0.            0:n001    = 209.0000000000 
+ +0:n002    = 283.0000000000  0:n003    = 283.0000000000 
+ +0:n004    =  57.2506806111  0:n005    = 145.7025172456 
+ +0:n006    = -17.9997644522  0:n007    = 145.7025172456 
+ +0:n009    =  65.3020121571  0:n010    = 9.268580102e-04
+ +0:n011    = 9.268580102e-04 0:n012    = -18.0000000000 
+ +0:n013    = 283.0000000000  0:n014    =   7.6173826994 
+ +0:n015    =  63.3507946964  0:n016    = 283.0000000000 
+ +0:n017    =  62.7237026930  0:n018    = -17.9997644522 
+ +0:n019    =  -8.6036299423  0:n020    =  57.2506789972 
+ +0:n021    =  -9.2688279594  0:n022    = 283.0000000000 
+ +0:n024    = 5.552096226e-06 0:n025    = -17.0000000000 
+ +0:n026    =   2.9075627495  0:n027    =   0.2683434761 
+ +0:out     =   0.            1:5       = 9.288732431e-04
+ +1:7       =   0.6681244119  2:5       = 9.288732431e-04
+ +2:7       =   0.6681244119  3:5       =  57.2506826272 
+ +3:7       =   0.6532548145  4:5       = 7.557911336e-06
+ +4:7       =   0.3384054379  5:5       = -17.9997634343 
+ +5:7       =   8.5650091453  6:5       = -17.9997634343 
+ +6:7       =   8.5650091453 
+
+
+ **** voltage sources
+
+ subckt                                                                      
+ element        0:v1             0:v2             0:v3             0:v4      
+  volts    -18.0000000000   283.0000000000   -17.0000000000   209.0000000000 
+  current  2.035998760e-09   -0.1736410921   2.024352099e-03 -2.981607076e-03
+  power    3.664797769e-08   49.1404290589   3.441398568e-02    0.6231558789 
+
+ subckt                   
+ element        0:v5      
+  volts      0.           
+  current  1.002907555e-09
+  power      0.           
+
+     total voltage source power dissipation=   49.7979989601  watts
+
+
+
+ **** resistors
+
+ subckt                                                                      
+ element        0:r1             0:r2             0:r3             0:r4      
+  r value  3.841000000e+03  7.269450000e+05  4.964190000e+05  9.198520000e+05
+  v drop    -7.7311720406    -8.3963700577    -8.6036299423  -9.268580102e-04
+  current -2.012801885e-03 -1.155021364e-05 -1.733138728e-05 -1.007616454e-09
+  power    1.556131766e-02  9.697986800e-05  1.491128425e-04  9.339173814e-13
+
+ subckt                                                                      
+ element        0:r5             0:r6             0:r7             0:r8      
+  r value  9.198520000e+05  6.307600000e+04  6.307600000e+04  2.313830000e+05
+  v drop  -9.268580102e-04  -63.2974827544   -63.2974827544  -2.355477506e-04
+  current -1.007616454e-09 -1.003511363e-03 -1.003511363e-03 -1.017999380e-09
+  power    9.339173814e-13  6.351974322e-02  6.351974322e-02  2.397874641e-13
+
+ subckt                                                                      
+ element        0:r9             0:r10            0:r11            0:r12     
+  r value  2.313830000e+05  5.536000000e+03  7.531840000e+05  1.119800000e+05
+  v drop   2.355477506e-04 -5.552096226e-06    0.             -62.7237026930 
+  current  1.017999380e-09 -1.002907555e-09    0.            -5.601330835e-04
+  power    2.397874641e-13  5.568239252e-15    0.             3.513362100e-02
+
+ subckt                                                                      
+ element        0:r13            0:rout           0:r15            0:r16     
+  r value  4.690000000e+03   25.0000000000   1.601000000e+03  6.368000000e+03
+  v drop    -1.9512174606     0.            -1.613882546e-06    2.6392192734 
+  current -4.160378381e-04    0.            -1.008046562e-09  4.144502628e-04
+  power    8.117802940e-04    0.             1.626868752e-15  1.093825121e-03
+
+ subckt                                     xu1              xu1             
+ element        0:r17            0:r18            1:re1            1:rcp     
+  r value  2.600600000e+04  664.0000000000   1.000000000e+09  1.000000000e+09
+  v drop     0.2683434761     0.2683434761     0.6681244119   138.0851345462 
+  current  1.031852173e-05  4.041317411e-04  6.681244119e-10  1.380851345e-07
+  power    2.768907988e-06  1.084461162e-04  4.463902298e-10  1.906750438e-05
+
+ subckt   xu1              xu2              xu2              xu2             
+ element        1:r1             2:re1            2:rcp            2:r1      
+  r value  2.000000000e+03  1.000000000e+09  1.000000000e+09  2.000000000e+03
+  v drop  -2.015232907e-06    0.6681244119   138.0851345462  -2.015232907e-06
+  current -1.007616454e-09  6.681244119e-10  1.380851345e-07 -1.007616454e-09
+  power    2.030581836e-15  4.463902298e-10  1.906750438e-05  2.030581836e-15
+
+ subckt   xu3              xu3              xu3              xu4             
+ element        3:re1            3:rcp            3:r1             4:re1     
+  r value  1.000000000e+09  1.000000000e+09  2.000000000e+03  1.000000000e+09
+  v drop     0.6532548145   143.6979878429  -2.016093106e-06    0.3384054379 
+  current  6.532548145e-10  1.436979878e-07 -1.008046553e-09  3.384054379e-10
+  power    4.267418527e-10  2.064911171e-05  2.032315706e-15  1.145182404e-10
+
+ subckt   xu4              xu4              xu5              xu5             
+ element        4:rcp            4:r1             5:re1            5:rcp     
+  r value  1.000000000e+09  2.000000000e+03  1.000000000e+09  1.000000000e+09
+  v drop    54.3431162477  -2.005815110e-06    8.5650091453   283.0000000000 
+  current  5.434311625e-08 -1.002907555e-09  8.565009145e-09  2.830000000e-07
+  power    2.953174284e-06  2.011647129e-15  7.335938166e-08  8.008900000e-05
+
+ subckt   xu5              xu6              xu6              xu6             
+ element        5:r1             6:re1            6:rcp            6:r1      
+  r value  1.000000000e+03  1.000000000e+09  1.000000000e+09  1.000000000e+03
+  v drop  -1.017999381e-06    8.5650091453   283.0000000000  -1.017999381e-06
+  current -1.017999381e-09  8.565009145e-09  2.830000000e-07 -1.017999381e-09
+  power    1.036322739e-15  7.335938166e-08  8.008900000e-05  1.036322739e-15
+
+
+ **** inductors
+
+ subckt                                                                      
+ element        0:l1             0:l2             0:l3             0:l4      
+  l value    3.8182000000     5.0614000000     3.8182000000     5.0614000000 
+  v drop     0.               0.               0.               0.           
+  current    0.               0.               0.               0.           
+  power      0.               0.               0.               0.           
+
+ subckt                   
+ element        0:l5      
+  l value  6.458000000e-02
+  v drop     0.           
+  current    0.           
+  power      0.           
+
+
+ **** voltage-controlled current sources
+
+
+ subckt           xu1              xu2              xu3              xu4     
+ element        1:g1             2:g1             3:g1             4:g1      
+  v drop   138.0851345462   138.0851345462   143.6979878429    54.3431162477 
+  current  1.003373278e-03  1.003373278e-03  9.744406512e-04  4.143969226e-04
+
+
+
+ subckt           xu5              xu5              xu6              xu6     
+ element        5:g1             5:g2             6:g1             6:g2      
+  v drop   283.0000000000   283.0000000000   283.0000000000   283.0000000000 
+  current  8.305665831e-02  3.763604733e-03  8.305665831e-02  3.763604733e-03
+
+
+
+
+ **** voltage-controlled voltage sources
+
+
+ subckt           xu1              xu2              xu3              xu4     
+ element        1:e1             2:e1             3:e1             4:e1      
+  volts      0.6681244009     0.6681244009     0.6532548141     0.3384054381 
+  current -6.681244119e-10 -6.681244119e-10 -6.532548145e-10 -3.384054379e-10
+
+
+
+ subckt           xu5              xu6     
+ element        5:e1             6:e1      
+  volts      8.5650091380     8.5650091380 
+  current -8.565009145e-09 -8.565009145e-09
+
+
+
+
+ **** diodes
+
+
+ subckt                            xu1              xu2              xu3     
+ element        0:d1             1:d3             2:d3             3:d3      
+ model          0:nscw100x       1:dx             2:dx             3:dx      
+  id       5.585455004e-04 -1.000000000e-09 -1.000000000e-09 -1.000000000e-09
+  vd         2.5783094641    -7.6164538262    -7.6164538262    -8.0513295299 
+  req      442.7611046270     0.               0.               0.           
+  cap      1.095609390e-10  3.083048956e-12  3.083048956e-12  3.006358299e-12
+
+
+
+ subckt           xu4              xu5              xu6     
+ element        4:d3             5:d3             6:d3      
+ model          4:dx             5:dx             6:dx      
+  id      -1.000000000e-09 -1.000000000e-09 -1.000000000e-09
+  vd        -2.9075551916   -17.9997634343   -17.9997634343 
+  req        0.               0.               0.           
+  cap      4.645165386e-12  2.062855471e-12  2.062855471e-12
+
+
+
+
+ **** bipolar junction transistors
+
+
+ subckt                                    
+ element        0:q1             0:q2      
+ model          0:x2n3904x       0:x2n2907x
+ region    FwdActive        FwdActive      
+  ib       5.781189192e-06 -1.587585361e-06
+  ic       2.007020695e-03 -4.144502521e-04
+  vbe        0.6651980171    -0.6270920035 
+  vce       16.8862106588    -6.1001156992 
+  vbc      -16.2210126417     5.4730236958 
+  vs        -7.6171819973   -62.7237185688 
+  power    3.389481989e-02  2.529190052e-03
+  betad    347.1639879973   261.0569878116 
+  gm       7.776733860e-02  1.610702731e-02
+  rpi      4.444041490e+03  1.618296894e+04
+  rx        20.0000000000    10.0000000000 
+  ro       5.790718941e+04  3.027454188e+05
+  cpi      3.756499682e-11  4.472044008e-11
+  cmu      1.428984003e-12  3.979625653e-12
+  cbx        0.               0.           
+  ccs        0.               0.           
+  betaac   345.6012793586   260.6595227584 
+  ft       3.174094075e+08  5.263879988e+07
+
+
+
+ ******
+ ***amplificador de potencia valvulado
+
+ ****** ac analysis tnom=  25.000 temp=  25.000 ******
+ maxac= 2.84514840e+01    at= 4.26579519e+01
+             from=   0.10000000    to= 1.00000000e+05
+ minac= 2.74521862e+01    at= 1.50000000e+04
+             from= 2.00000000e+01    to= 1.50000000e+04
+ locut= 2.84514610e+01
+ hicut= 2.74521862e+01
+ 
+ **warning** invalid fft start time, reset to transient start time 9.90000e-01
+
+ ******
+ ***amplificador de potencia valvulado
+
+ ****** transient analysis tnom=  25.000 temp=  25.000 ******
+ fourier components of transient response v(out)
+ dc component = -3.9167858786e-02
+  
+ harmonic frequency         fourier           normalized        phase             normalized        
+ no       (hz)              component         component         (deg)             phase (deg)       
+ 1         1.0000000000e+03  1.9535870147e+01  1.0000000000     -9.2045853900e+01  0.               
+ 2         2.0000000000e+03  6.6178074420e-02  3.3875160882e-03 -1.7428331828e+02 -8.2237464382e+01 
+ 3         3.0000000000e+03  3.0508738127      0.1561677975     -9.5217835711e+01 -3.1719818110     
+ 4         4.0000000000e+03  3.5593895165e-02  1.8219764411e-03 -1.6136711680e+02 -6.9321262895e+01 
+ 5         5.0000000000e+03  0.1914965004      9.8023020692e-03  6.4919289897e+01  1.5696514380e+02 
+ 6         6.0000000000e+03  8.9424940337e-03  4.5774741368e-04 -8.4569208488e+01  7.4766454119     
+ 7         7.0000000000e+03  0.4647014436      2.3787087041e-02  7.7771666593e+01  1.6981752049e+02 
+ 8         8.0000000000e+03  1.4895001280e-02  7.6244370833e-04 -3.5720208314      8.8473833069e+01 
+ 9         9.0000000000e+03  8.0827020000e-02  4.1373647241e-03  1.1488368094e+02  2.0692953484e+02 
+  
+ total harmonic distortion =   15.8376  percent
+  fft components of transient response v(out)
+
+ Window: Rectangular
+
+ DC: ON
+ First Harmonic:  1.0000e+03
+ Start Freq:  1.0000e+03
+ Stop  Freq:  9.0000e+03
+
+ dc component: mag(dB)=  -2.797E+01  mag=   3.995E-02  phase=   1.800E+02
+
+ frequency    frequency    fft_mag     fft_mag    fft_phase
+   index        (hz)        (dB)                    (deg)
+
+    10       1.0000e+03    2.5819e+01   1.9542e+01   -9.2045e+01
+    20       2.0000e+03   -2.3547e+01   6.6473e-02   -1.7506e+02
+    30       3.0000e+03    9.7121   3.0592   -9.5194e+01
+    40       4.0000e+03   -2.9183e+01   3.4741e-02   -1.6033e+02
+    50       5.0000e+03   -1.4326e+01   0.1922    6.4476e+01
+    60       6.0000e+03   -3.9530e+01   1.0556e-02   -8.2853e+01
+    70       7.0000e+03   -6.5613   0.4698    7.7763e+01
+    80       8.0000e+03   -3.6715e+01   1.4597e-02   -7.5505
+    90       9.0000e+03   -2.1763e+01   8.1629e-02    1.1560e+02
+  
+ maxv= 1.66441301e+01    at=   0.99025391
+             from=   0.99000000    to=   1.00000000
+ minv=-1.66441650e+01    at=   0.99075195
+             from=   0.99000000    to=   1.00000000
+ rmsv= 1.39873646e+01  from=   0.99000000     to=   1.00000000
+ maxi=   0.66576660    at=   0.99075195
+             from=   0.99000000    to=   1.00000000
+ mini=  -0.66576520    at=   0.99025391
+             from=   0.99000000    to=   1.00000000
+ rmsi=   0.55949458  from=   0.99000000     to=   1.00000000
+   h1= 1.95415203e+01    at=   0.        Hz (rounded from  1.00000000e+03Hz)
+   h2= 6.64731975e-02    at=   0.        Hz (rounded from  2.00000000e+03Hz)
+   h3=   3.05919101    at=   0.        Hz (rounded from  3.00000000e+03Hz)
+   h4= 3.47408668e-02    at=   0.        Hz (rounded from  4.00000000e+03Hz)
+   h5=   0.19217972    at=   0.        Hz (rounded from  5.00000000e+03Hz)
+   h6= 1.05555901e-02    at=   0.        Hz (rounded from  6.00000000e+03Hz)
+   h7=   0.46982522    at=   0.        Hz (rounded from  7.00000000e+03Hz)
+   h8= 1.45971621e-02    at=   0.        Hz (rounded from  8.00000000e+03Hz)
+   h9= 8.16289765e-02    at=   0.        Hz (rounded from  9.00000000e+03Hz)
+
+          ***** job concluded
+ ******  
+ ***amplificador de potencia valvulado
+
+ ****** job statistics summary tnom=  25.000 temp=  25.000 ******
+
+  ******  HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :     4
+  Actual Threads Count       :     1
+
+
+  ******  Circuit Statistics  ******
+  # nodes       =      53 # elements   =     100
+  # resistors   =      36 # capacitors =      21 # inductors   =       5
+  # mutual_inds =      10 # vccs       =       8 # vcvs        =       6
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       5
+  # curr_srcs   =       0 # diodes     =       7 # bjts        =       2
+  # jfets       =       0 # mosfets    =       0 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       0
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.01           1         159
+  ac analysis        0.01         601         601
+  transient         11.65        1001      288418       75332 rev=      3802
+  readin             0.04
+  errchk             0.01
+  setup              0.00
+  output             0.00
+
+
+           peak memory used         64.40 megabytes
+           total cpu time           11.71 seconds
+           total elapsed time       11.76 seconds
+           job started at     15:31:49 01/23/2024
+           job ended   at     15:32:01 01/23/2024
+  **info** (C:\Users\user\Otimizador_v6c\Circuits\Audio\Power_Amp_01\param:55) DC voltage reset to initial transient source value in source 0:v5. new dc=0.0000D+00
+  **warning** (C:\Users\user\Otimizador_v6c\Circuits\Audio\Power_Amp_01\circuito.sp:118) Inductance for the inductor l1 >= 0.1 henry, please verify it.
+  **warning** For .option genk=1, 0 implicit mutual inductors are generated!
+
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 1         bypass  = 2.0000000000  
+FFT analysis is detected and FFT_ACCURATE is turned on automatically to improve accuracy. 
+To disable FFT_ACCURATE, set .OPTION FFT_ACCURATE=0.
+ ******  
+ ***amplificador de potencia valvulado
+
+ ****** operating point information tnom=  25.000 temp=  25.000 ******
+ ****** operating point status is voltage   simulation time is     0.           
+    node    =voltage            node    =voltage
+
+ +0:in      =   0.            0:n001    = 209.0000000000 
+ +0:n002    = 283.0000000000  0:n003    = 283.0000000000 
+ +0:n004    =  57.2506806111  0:n005    = 145.7025172456 
+ +0:n006    = -17.9997644522  0:n007    = 145.7025172456 
+ +0:n009    =  65.3020121571  0:n010    = 9.268580102e-04
+ +0:n011    = 9.268580102e-04 0:n012    = -18.0000000000 
+ +0:n013    = 283.0000000000  0:n014    =   7.6173826994 
+ +0:n015    =  63.3507946964  0:n016    = 283.0000000000 
+ +0:n017    =  62.7237026930  0:n018    = -17.9997644522 
+ +0:n019    =  -8.6036299423  0:n020    =  57.2506789972 
+ +0:n021    =  -9.2688279594  0:n022    = 283.0000000000 
+ +0:n024    = 5.552096226e-06 0:n025    = -17.0000000000 
+ +0:n026    =   2.9075627495  0:n027    =   0.2683434761 
+ +0:out     =   0.            1:5       = 9.288732431e-04
+ +1:7       =   0.6681244119  2:5       = 9.288732431e-04
+ +2:7       =   0.6681244119  3:5       =  57.2506826272 
+ +3:7       =   0.6532548145  4:5       = 7.557911336e-06
+ +4:7       =   0.3384054379  5:5       = -17.9997634343 
+ +5:7       =   8.5650091453  6:5       = -17.9997634343 
+ +6:7       =   8.5650091453 
+
+ ******
+ ***amplificador de potencia valvulado
+
+ ****** transient analysis tnom=  25.000 temp=  25.000 ******
+ maxslew= 1.66536832e+01    at= 1.00011510e-03
+             from=   0.            to= 1.00000000e-02
+ minslew=  -0.41010274    at= 9.05413821e-03
+             from=   0.            to= 1.00000000e-02
+ slew= 1.25094836e+07
+
+          ***** job concluded
+ ******  
+ ***amplificador de potencia valvulado
+
+ ****** job statistics summary tnom=  25.000 temp=  25.000 ******
+
+  ******  Circuit Statistics  ******
+  # nodes       =      53 # elements   =     100
+  # resistors   =      36 # capacitors =      21 # inductors   =       5
+  # mutual_inds =      10 # vccs       =       8 # vcvs        =       6
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       5
+  # curr_srcs   =       0 # diodes     =       7 # bjts        =       2
+  # jfets       =       0 # mosfets    =       0 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       0
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.01           1         159
+  transient          0.06        1001        1635         563 rev=        11
+  readin             0.03
+  errchk             0.00
+  setup              0.00
+  output             0.00
+
+
+           peak memory used         64.40 megabytes
+           total cpu time            0.11 seconds
+           total elapsed time        0.11 seconds
+           job started at     15:31:49 01/23/2024
+           job ended   at     15:32:01 01/23/2024
+           job total runtime        11.87 seconds
+
+
+  lic: Release hspice token(s) 
+ lic: total license checkout elapse time:        0.03(s)

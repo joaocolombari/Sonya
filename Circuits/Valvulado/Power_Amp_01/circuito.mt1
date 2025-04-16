@@ -1,0 +1,8 @@
+$DATA1 SOURCE='HSPICE' VERSION='P-2019.06-SP1-1 win64' PARAM_COUNT=0
+.TITLE ''
+ maxv             minv             rmsv             maxi            
+ mini             rmsi             maxslew          minslew         
+ slew             temper           alter#          
+    9.90163328      -9.62104762       9.53974391       1.20263095   
+   -1.23770416       1.19246799       9.90163328      -9.62104762   
+  1.8304850e+06     25.00000000    2               

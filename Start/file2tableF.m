@@ -1,0 +1,39 @@
+function [IM] = file2tableF(n, file, varargin)
+% esta rotina le todos os numeros apos '=' ou progura numeros que seguem as variavies em varargin
+   arq = fopen(file,'r');
+   if arq > (-1)
+    for i=1:n
+    fgets(arq);
+    end;
+
+    words = fscanf(arq,'%c');
+    if (nargin<=2)
+      %values = regexp(words,'[^a-zA-Z\[]-?[0-9]+\.?[0-9]*[E|e]?[\+|-]?[0-9]*','match');
+      values = regexp(words, '=\s*-?[0-9]+\.?[0-9]*[E|e]?[\+|-]?[0-9]*','match');
+      IM = zeros(1,length(values));
+      for i=1:length(values)
+	    IM(i) = str2num(values{i}(2:end));
+      end
+    else
+      j=0;
+      IM=[];
+      for i=1:(nargin-2)
+	    values = regexp(words,[varargin{i} '\s*=\s*-?[0-9]*\.?[0-9]*[E|e]?[\+|-]?[0-9]*'],'match');
+        if length(values) > 0 
+            nomes = regexp(values{1},[varargin{i} '\s*=\s*'],'match');
+            valor = values{1}(length(nomes{1})+1:end);
+            if (length(valor) > 0)
+            x = str2num(valor);
+              if ( length(x) > 0)
+               IM(j+1) = x; 
+               j=j+1;
+              end
+            end
+        end
+      end
+    end
+    fclose(arq);
+   else
+     IM=[];
+   end
+end

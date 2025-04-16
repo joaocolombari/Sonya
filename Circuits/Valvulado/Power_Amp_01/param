@@ -1,0 +1,57 @@
+* * * * * * * * * * 
+.include C:\Users\user\Otimizador_v6c\ModelsHSP\Model35
+.Param   X1= 3.711  X2= 2.393  X3= 3.657  X4= 4.670  X5= 4.399  X6= 1.866  
+.Param   X7= 199.733  X8= 34.573  X9= 26.017  X10= 1.302  X11= 47.680  X12= 12.969  X13= 74.658  
+.Param   X14= 16.026  X15= 6.687  X16= 17.444  X17= 10.873  
+* ( 3.711  2.393  3.657  4.670  4.399  1.866  199.733  34.573  26.017  1.302  47.680  12.969  74.658  16.026  6.687  17.444  10.873  )
+
+
+V5 in 0 0 AC 1 SIN (0 1.1 1k)
+
+* * * * * * * * * * 
+ 
+* COMANDOS 
+ 
+* * * * * * * * * *
+
+.param cond=0
+.if (cond==0)
+.TRAN 10u 1000ms START=990ms
+.FOUR 1k V(OUT)
+.AC DEC 100 0.1 100k
+.FFT V(OUT) freq=1k fmin=1k fmax=9k np=1024 FORMAT=UNORM 
+*.PROBE TRAN V(OUT) V(N010) V(N023)
+*.PROBE AC V(OUT) V(N010) V(N023)
+
+* MEDIDAS
+.MEASURE TRAN maxv max V(out)
+.MEASURE TRAN minv min V(out)
+.MEASURE TRAN rmsv RMS v(out) FROM=990ms TO=1000ms
+
+.MEASURE TRAN maxi max I(Rout)
+.MEASURE TRAN mini min I(Rout)
+.MEASURE TRAN rmsi RMS I(Rout) FROM=990ms TO=1000ms
+
+.MEASURE AC maxac MAX vdb(out) FROM=0.1HZ TO=100KHZ
+.MEASURE AC minac MIN vdb(out) FROM=20HZ TO=15KHZ
+.MEASURE AC locut find vdb(out) AT=20
+.MEASURE AC hicut find vdb(out) AT=15000
+
+.MEASURE FFT h1 find vm(out) AT=1k
+.MEASURE FFT h2 find vm(out) AT=2k
+.MEASURE FFT h3 find vm(out) AT=3k
+.MEASURE FFT h4 find vm(out) AT=4k
+.MEASURE FFT h5 find vm(out) AT=5k
+.MEASURE FFT h6 find vm(out) AT=6k
+.MEASURE FFT h7 find vm(out) AT=7k
+.MEASURE FFT h8 find vm(out) AT=8k
+.MEASURE FFT h9 find vm(out) AT=9k
+.endif
+
+.alter
+.param cond=1
+.TRAN 10u 10m
+V5 in 0 PULSE (0 1.1 0 10p 10p 1m 2m)
+.MEASURE TRAN MAXSLEW MAX V(OUT)
+.MEASURE TRAN MINSLEW MIN V(OUT)
+.MEASURE TRAN SLEW DERIV V(OUT) WHEN V(OUT)="(MAXSLEW+MINSLEW)/2"

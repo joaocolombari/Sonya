@@ -1,0 +1,282 @@
+global modo;
+global nvars;
+global genesLB;
+global inicialSol;
+global dif;
+global modoind;
+global namext;
+global cont;
+global circuito;
+global slash;
+
+namext = '';
+prompt={'Number of Runs','Max simulations (more than 1 run)','Extension of the output file', 'seed'};
+name='Algoritm Running';
+numlines=1;
+defaultanswer={'1','4000', 'A1', ''};
+entrada=inputdlg(prompt,name,numlines,defaultanswer);
+namext = entrada{3};
+system(['del ' circuito slash 'results' slash 'optimos.' modo namext]);
+
+switch modo
+ case 'GA'
+    modoind=1;
+    load optimtool_GA.mat;
+    optimproblem.lb = zeros(1, nvars);
+    optimproblem.ub = ones(1, nvars);
+    optimproblem.nvars= nvars;
+    optimproblem.options.PopInitRange = [optimproblem.lb; optimproblem.ub];
+    optimproblem.options.PopulationSize=[100];
+    optimproblem.options.Generations=round(str2num(entrada{2})/sum(optimproblem.options.PopulationSize))-1;
+   % inicializa os geradores para se repetir resultados
+    if ~isempty(entrada{4}) 
+         rand('seed', str2double(entrada{4}));
+         randn('seed', str2double(entrada{4}));
+     end;
+     
+    Best.scoreT = Inf('double');
+    if str2double(entrada{1}) == 1
+        optimtool(optimproblem);
+     else for i=1:str2double(entrada{1});
+           fprintf('\n__________________  inicio da %1.0f otimizacao   Melhor score: %3g  __________________\n\n ', i, Best.scoreT);
+           cont = 0; Best.score = Inf('double'); Best.scoreT = Inf('double');
+           ga(optimproblem);
+          end;
+    end;
+ 
+ case 'SA'
+    modoind=2;
+    load optimtool_SA.mat;
+    optimproblem.lb = zeros(1, nvars);
+    optimproblem.ub = ones(1, nvars);
+    optimproblem.x0 = zeros(1, nvars);
+    optimproblem.options.InitialTemperature=2.0;
+    optimproblem.options.ReannealInterval= 50;
+    optimproblem.options.MaxFunEvals=str2num(entrada{2});
+    j=1;
+    for i=1:length(genesLB)
+      if (dif(i) ~= 0)  
+        optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+        j=j+1;
+      end;
+    end;   
+  
+    % gera condicoes iniciais
+    if ~isempty(entrada{4}) 
+        samples  = RandStream('mt19937ar', 'Seed', str2double(entrada{4})); % this stream is used to generate the initial conditions
+        rand('seed', str2double(entrada{4}));
+        optimproblem.x0 = rand(samples, 1,nvars);
+     end;
+    
+    Best.scoreT = Inf('double');
+    if str2double(entrada{1}) == 1
+        optimtool(optimproblem);
+    else for i=1:str2double(entrada{1});
+           fprintf('\n__________________  inicio da %1.0f otimizacao   Melhor score: %3g  __________________\n\n ', i, Best.scoreT); 
+           cont = 0; Best.score = Inf('double');
+           simulannealbnd(optimproblem);
+           if ~isempty(entrada{4}) 
+            optimproblem.x0 = rand(samples, 1,nvars);
+          end;
+         end;
+    end;
+      
+ case 'PS'
+    modoind=3;
+    load optimtool_PS.mat;
+    optimproblem.lb = zeros(1, nvars);
+    optimproblem.ub = ones(1, nvars);
+    optimproblem.x0 = zeros(1, nvars);
+    optimproblem.options.MaxFunEvals = str2num(entrada{2});
+    j=1;
+    for i=1:length(genesLB)
+       if (dif(i) ~= 0)  
+          optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+          j=j+1;
+       end;
+    end;  
+    
+    % gera condicoes iniciais
+    if ~isempty(entrada{4}) 
+         samples  = RandStream('mt19937ar', 'Seed', str2double(entrada{4})); % this stream is used to generate the initial conditions
+         rand('seed', str2double(entrada{4}));
+         optimproblem.x0 = rand(samples, 1,nvars);
+     end;
+     
+     Best.scoreT = Inf('double');
+     if str2double(entrada{1}) == 1
+        optimtool(optimproblem);
+     else for i=1:str2double(entrada{1});
+           fprintf('\n__________________  inicio da %1.0f otimizacao   Melhor score: %3g  __________________\n\n ', i, Best.scoreT); 
+           cont = 0; Best.score = Inf('double');
+           patternsearch(optimproblem);
+           if ~isempty(entrada{4}) 
+            optimproblem.x0 = rand(samples, 1,nvars);
+          end;
+         end;
+    end;
+    
+ case 'MM'
+    load optimtool_MM.mat;
+    optimproblem.lb = zeros(1, nvars);
+    optimproblem.ub = ones(1, nvars);
+    optimproblem.x0 = zeros(1, nvars);
+    j=1;
+    for i=1:length(genesLB)
+       if (dif(i) ~= 0)  
+          optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+          j=j+1; 
+       end;
+     end;
+    modoind=4;
+    optimtool(optimproblem);
+    
+ case 'SAM'
+     modoind=5;
+ %set the options
+    optimproblem = struct(...
+    'fitnessfcn', @fitness,...
+    'Display', 'crossovers',...  % it can be 'final', 'iter', 'crossovers', or 'none'
+    'TolFun', 1e-6,...
+    'ObjectiveLimit', -1e+20,...
+    'TolCon', 1e-6,...
+    'CoolSched',@(T) (.8*T),...
+    'InitTemp',20,...                % initial temperature
+    'MaxTriesWithoutBest',10000,...  %max number of attempts without a new best before finishing
+    'MaxSuccess',200,...
+    'MaxTries',300,...
+    'StopTemp',1e-8,...
+    'StopVal',-Inf,...
+    'MaxtoLocal',25,...
+    'TimeLimit',inf,...    % time in seconds
+    'LockOn',1,...         % lock to variables that are showing progress
+    'Crossover',1,...      % able or disable crossovers
+    'MaxSim',3000,... 
+    'Initial_Sigma',1);
+
+    optimproblem.lb = zeros(1, nvars);
+    optimproblem.ub = ones(1, nvars);
+    optimproblem.x0 = zeros(1, nvars);
+   optimproblem.MaxSim = str2num(entrada{2});
+    j=1;
+    for i=1:length(genesLB)
+      if (dif(i) ~= 0)  
+        optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+        j=j+1;
+      end;
+    end;   
+    if ~isempty(entrada{4}) 
+        samples  = RandStream('mt19937ar', 'Seed', str2double(entrada{4})); % this stream is used to generate the initial conditions
+        rand('seed', str2double(entrada{4}));
+        optimproblem.x0 = rand(samples, 1, nvars);
+    end;
+         
+    Best.scoreT = Inf('double');
+    for i=1:str2double(entrada{1});
+      fprintf('\n__________________  inicio da %1.0f otimizacao   Melhor score: %3g  __________________\n\n ', i, Best.scoreT);
+      cont = 0; Best.score = Inf('double');
+      annealwithcrossovers(optimproblem);
+      if ~isempty(entrada{4}) 
+        optimproblem.x0 = rand(samples, 1,nvars);
+      end;
+   end;
+% SAM;  
+    
+ case 'SCE'
+   optimproblem.lb = zeros(1, nvars);
+   optimproblem.ub = ones(1, nvars);
+   optimproblem.x0 = zeros(1, nvars);
+   j=1;
+    for i=1:length(genesLB)
+      if (dif(i) ~= 0)  
+          optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+          j=j+1;
+       end;
+    end;
+   fun = 'fitness';
+   modoind=6;
+   saida= SCE(fun, optimproblem.x0, optimproblem.lb, optimproblem.ub);
+ 
+ case 'PSO'
+   modoind=7;
+   optimproblem.lb = zeros(1, nvars);
+   optimproblem.ub = ones(1, nvars);
+   optimproblem.x0 = zeros(1, nvars);
+   fun = 'fitness';
+   j=1;
+   for i=1:length(genesLB)
+     if (dif(i) ~= 0)  
+       optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+       j=j+1;
+     end;
+   end;
+   if ~isempty(entrada{4}) 
+        samples  = RandStream('mt19937ar', 'Seed', str2double(entrada{4})); % this stream is used to generate the initial conditions
+        rand('seed', str2double(entrada{4}));
+        optimproblem.x0 = rand(samples, 1, nvars);
+    end;
+    
+   Best.scoreT = Inf('double');
+   for i=1:str2double(entrada{1});
+      fprintf('\n__________________  inicio da %1.0f otimizacao   Melhor score: %3g  __________________\n\n ', i, Best.scoreT);
+      cont = 0; Best.score = Inf('double');
+      saida= PSO(fun, optimproblem.x0, optimproblem.lb, optimproblem.ub, str2double(entrada{2}), 3*length(optimproblem.x0));
+      %saida= PSON2(fun, optimproblem.x0, optimproblem.lb, optimproblem.ub, 6*length(optimproblem.x0), length(optimproblem.x0), 300, 'radbas', round(nvars/2), str2double(entrada{2}));
+      if ~isempty(entrada{4}) 
+         optimproblem.x0 = rand(samples, 1,nvars);
+      end;
+   end;
+
+ case 'DE'
+   optimproblem.lb = zeros(1, nvars);
+   optimproblem.ub = ones(1, nvars);
+   optimproblem.x0 = zeros(1, nvars);
+    j=1;
+    for i=1:length(genesLB)
+      if (dif(i) ~= 0)  
+          optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+          j=j+1;
+       end;
+    end;
+   fun = 'fitness'; VTR = 1.e-8;
+   modoind=8;
+   Best.scoreT = Inf('double');
+   Rnvars = length(optimproblem.x0);
+   
+   for i=1:str2num(entrada{1});
+    fprintf('\n__________________  inicio da %1.0f otimizacao   Melhor score: %3g  __________________\n\n ', i, Best.scoreT);
+    cont = 0; Best.score = Inf('double');
+    saida= devec3(fun, VTR, Rnvars, optimproblem.lb, optimproblem.ub, [], 6*Rnvars, round(str2num(entrada{2})/(6*Rnvars)));
+   end;
+   
+ case 'EvN'
+   modoind=9;
+   fun = 'fitness';
+   optimproblem.x0 = zeros(1, nvars);
+   j=1;
+   for i=1:length(genesLB)
+     if (dif(i) ~= 0)  
+       optimproblem.x0(j)= (inicialSol(i) - genesLB(i))/dif(i);
+       j=j+1;
+     end;
+   end;
+
+   if ~isempty(entrada{4}) 
+        samples  = RandStream('mt19937ar', 'Seed', str2double(entrada{4})); % this stream is used to generate the initial conditions
+        rand('seed', str2double(entrada{4}));
+        optimproblem.x0 = rand(samples, 1, nvars);
+   end;
+   
+%saida = EvNeu (fun,  optimproblem.x0, nvars, 200, 200, 40, 300, 'radbas', [nvars, nvars]);
+   Best.scoreT = Inf('double');
+   for i=1:str2double(entrada{1})
+     fprintf('\n__________________  inicio da %1.0f otimizacao   Melhor score: %3g  __________________\n\n ', i, Best.scoreT);
+     cont = 0; Best.score = Inf('double');
+     saida = EvNeu16_4(fun,  optimproblem.x0, nvars, 95, 200, 40, 300, 'radbas', round(nvars/2));
+     if ~isempty(entrada{4}) 
+         optimproblem.x0 = rand(samples, 1,nvars);
+     end;
+   end;
+
+   
+end

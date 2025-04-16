@@ -1,0 +1,905 @@
+function [minimum,fval] = annealwithcrossovers3(options)
+%ANNEALWITHCROSSOVERS finds the minimum of a multi-objective function of
+%several variables for a given set of weights. It uses an AOF
+%(aggregate objective function) as a guide while monitoring all the multi-
+%objective functions independently and performing crossovers when a local minimum is detected
+%   ANNEALWITHCROSSOVERS attempts to solve problems of the form:
+%    min F(X)  subject to:  LB <= X <= UB        (bounds)
+%
+%   [X, fval] = ANNEALWITHCROSSOVERS(PROBLEM) finds the minimum for PROBLEM. PROBLEM is a
+%   structure with the following template:
+%
+%    options = struct(...
+%		  'fitnessfcn', @loss,...
+%		  'CoolSched',@(T) (.99*T),... %cooling schedule of the simulated annealing process
+%		  'InitTemp',100,...           %initial temperature
+%		  'MaxConsRej',25000,...       %max consecutive rejections until stops
+%		  'MaxTries',10,...            %number of iterations until cooling schedule operates
+%		  'StopTemp',1e-200,...        %minimum temperature until optimization stops
+%		  'StopVal',-Inf,...           %minimum value until optimization stops
+%		  'Verbosity',2,...            %display verbosity: 0-none; 1-only final report; 2-report at each temperature change
+%		  'MaxtoLocal',10,...          %max failures until a local minimum is detected
+%		  'Initial_Sigma',50,...       %initial deviation in variables (great numbers are better as they will automatically adapt to the problem size)
+%		  'lock_on',1,...              %temporary lock to variables that are showing progress
+%		  'crossover',1,...            %enable or disable crossovers
+%		  'increaseweight',0.01,...    %added weight in individual cost function to compose AOF after local minimum
+%		  'weightmemorysize',5,...     %memory size of local minimums
+%		  'totaltime',Inf,...          %time limit
+%		  'maxfunevals',5000);         %function evaluation limit
+%   Author: Tiago Oliveira Weber
+%   E-mail: tiago.oliveira.weber@gmail.com
+%   Date: 24/04/2014
+
+%*******************
+%INITIAL PARAMETERS
+%*******************
+selected = 0;
+loss = options.fitnessfcn;
+parent = options.x0;
+lb = options.lb;
+ub = options.ub;
+
+%[initenergy,mof] = loss(parent);
+[initenergy,mof] = feval(loss, parent);
+
+nobjectives = length(mof);
+increaseweight = options.increaseweight;
+weightmemorysize = options.weightmemorysize;
+%weightmemorysize = nobjectives;
+crossover = options.crossover;
+n_crossover_abandon = 10000;
+crossover_counter = 0;
+locals_without_crossover = 0;
+locals_without_crossover_max = 100;
+options.multiple_variables = round(length(lb));
+multiple_variables = options.multiple_variables;
+multiple_variables_initial = multiple_variables;
+lock_on = options.lock_on;
+Tinit_original = options.InitTemp;
+%Tinit_original = 1;
+Tinit = Tinit_original;
+minT = options.StopTemp;
+cool = options.CoolSched;
+minF = options.StopVal;
+max_consec_rejections = options.MaxConsRej;
+%max_try = options.MaxTries;
+max_try = 25;
+%max_success = options.MaxSuccess;
+max_success = inf;
+max_fun_evals = options.maxfunevals;
+report = options.Verbosity;
+%max_to_temp = round(length(lb));  %2
+%max_to_ledge = round(length(lb)); %2
+tincrease_counter = 0;
+tdecrease_counter = 0;
+ledge_th = round(length(lb)/2);
+%max_to_local = min(round(length(lb)),10);%round(length(lb)); %max(round(length(lb)),10);
+max_to_local = 10;
+justcrossedover = 0;
+
+initialsample = min(10*length(lb),round(max_fun_evals*0.5));
+timelimit = options.totaltime;
+
+anchor_indprop = 0.99;
+anchor_aofprop = 0.01;
+
+history_counter = 0;
+history_counter_max = 100;  %was 20 %was 200
+tic;
+
+if(crossover==1)
+    %dist_penalty_factor = initenergy/100;
+%    dist_penalty_factor = initenergy;
+   dist_penalty_factor = 0;
+elseif(crossover==2 || crossover==0)
+    dist_penalty_factor = 0;
+end
+
+sigma = zeros(1,length(parent));
+for i=1:length(parent)
+    sigma(i)=options.Initial_Sigma;
+end
+k = 0.0029;
+itry = 0;
+failcounter = 0;
+failcounter_t = 0;
+approvecounter_t = 0;
+ledgecounter = 0;
+modifyalot = 0;
+success = 0;
+finished = 0;
+consec = 0;
+intmax_notbest_count = 0;
+notbest_count = 0;
+T = Tinit;
+Temp = Tinit;
+%[initenergy,costs_splited] = loss(parent);
+[initenergy,costs_splited]= feval(loss,parent);
+
+if (options.weightmemorysize > 0)
+%    increaseweight = ones(1,nobjectives)*0.01; %/weightmemorysize;
+%    increaseweight = ones(1,nobjectives)*initenergy/mean(costs_splited); %/weightmemorysize;
+    increaseweight = ones(1,nobjectives)*options.increaseweight;
+else
+    %increaseweight = zeros(1,nobjectives)*mean(costs_splited); %/weightmemorysize;
+    increaseweight = ones(1,nobjectives)*options.increaseweight;
+end
+
+oldenergy = initenergy;
+old_splited = costs_splited;
+
+iteration_counter = 0;
+crossover_already_better = 0;
+
+total = 0;
+if (report==2)
+    fprintf(1,'\n  T = %f \t Cost: %f\n',T,initenergy);
+end
+
+
+
+
+bestsolution_x = parent;
+bestsolution_cost = inf;
+for i=1:nobjectives
+    anchorcosts_splited(i) = inf;
+    anchor_x(i,:) = parent;
+    bestsolution_costs_splited(i) = inf;
+    anchorcost(i) = inf;
+    %new feature
+    anchor_sigma(i,:) = ones(1,length(lb))*options.Initial_Sigma;
+end
+tempcosts_splited{1} = 0;
+
+real_objs = -inf;
+keep_pos = zeros(1,length(parent));
+local_minimuns = 0;
+local_minimuns_history = 0;
+
+roll = 0;
+worstcase = 0;
+
+
+%for i=1:initialsample;
+%      iteration_counter = iteration_counter + 1;
+%      xtry = lb+(ub-lb).*rand(1,length(lb));                     
+%      [trycost,trycosts_splited]=loss(xtry);
+
+
+%HALTON SET FOR INITIAL SAMPLES
+%P = haltonset(length(lb)); 
+%X=net(P,initialsample+20);
+%initialpoints=X(20:end);
+
+%LATIN HYPERCUBE FOR INITIAL SAMPLES
+initialpoints=lhsdesign(initialsample,length(lb));
+
+%TRY N TIMES TO DECIDE THE BEST INITIAL POINT
+for i=1:initialsample;
+      iteration_counter = iteration_counter + 1;
+      xtry = lb+(ub-lb).*initialpoints(i,:);                     
+      [trycost,trycosts_splited]=feval(loss, xtry);
+
+      %save parent
+      if trycost < oldenergy
+           parent = xtry;
+           oldenergy = trycost;
+      end
+    %********************** 
+    % UPDATE ANCHOR POINTS
+    %**********************                
+    for i=1:length(trycosts_splited)
+        if (((trycosts_splited(i)*anchor_indprop+trycost*anchor_aofprop) < (anchorcosts_splited(i)*anchor_indprop+anchorcost(i)*anchor_aofprop)) || anchorcost(i) == inf)
+            anchorcosts_splited(i) = trycosts_splited(i);
+            anchor_x(i,:) = xtry;
+            anchorcost(i) = trycost;
+            %new feature
+            anchor_sigma(i,:) = sigma;
+        end
+    end
+
+end
+
+
+%*******************
+%OPTIMIZATION LOOP
+%*******************
+while ~finished;
+    roll = roll + 1;
+    itry = itry+1;
+    iteration_counter = iteration_counter + 1;
+    current = parent;
+    if (toc > timelimit)
+        finished = 1;
+        break
+    end
+
+    %*******************
+    %EVENT HANDLER
+    %*******************    
+    if itry >= max_try || iteration_counter > max_fun_evals || success >= max_success || failcounter > max_to_local || intmax_notbest_count >= max_consec_rejections
+        if (iteration_counter > max_fun_evals)
+            disp('Finishing due to iteration_counter >= max_fun_evals')
+            finished = 1;
+            total = total + itry;
+            break;
+        elseif T < minT || intmax_notbest_count >= max_consec_rejections;
+            disp('Finishing due to intmax_notbest_count >= max_consec_rejections')
+            finished = 1;
+            total = total + itry;
+            break;
+        elseif failcounter > max_to_local
+            %*******************
+            %CONTROL CROSSOVER MODE
+            %*******************            
+           if (options.crossover && (locals_without_crossover > locals_without_crossover_max)) %RE-ENABLE CROSSOVERS
+                if (options.crossover==2); 
+                    disp('keeping in crossover mode 2')
+%                    keyboard
+                elseif (options.crossover==1) 
+                    disp('changing BACK to crossover mode 1')
+%keyboard
+                   % n_crossover_abandon = 10;
+                    locals_without_crossover = 0;
+                    crossover = 1;
+                    multiple_variables = options.multiple_variables;
+                    sigma = (sigma./sigma).*(options.Initial_Sigma);
+                end;
+            elseif (options.crossover && (crossover==0 || crossover==2))
+                locals_without_crossover = locals_without_crossover+1;
+            end                        
+            if (crossover==1) %PERFORM CROSSOVER FOR CROSSOVER MODE 1                
+                disp('crossover mode 1')
+%keyboard
+%                    parent = bestsolution_x; %experimental
+%                    Oldenergy = bestsolution_cost; %experimental
+
+                local_minimuns = local_minimuns +1;
+                local_minimuns_history = local_minimuns_history +1;
+                crossover_counter = crossover_counter + 1;
+                modifyalot = 1;
+            else              % OTHER CASES OF CROSSOVER MODE
+                if (crossover==2) % PERFORM RESTART FOR CROSSOVER MODE 2
+                disp('crossover mode 2')
+%			keyboard
+                    parent = bestsolution_x; 
+                    oldenergy = bestsolution_cost;
+                    justcrossedover=1;
+                else %was end
+                local_minimuns = local_minimuns +1;
+                local_minimuns_history = local_minimuns_history +1;                
+                %Operate increase of weight for crossover==2 and for crossover==0
+                for i=1:size(costs_splited,2)
+                    costs_splitedm(i) = bestsolution_costs_splited(i);
+                end                
+                worst_spec_index = 1;
+                worst_spec_cost = -inf;
+                for i=1:nobjectives
+                    if costs_splitedm(i) > worst_spec_cost
+                        worst_spec_cost = costs_splitedm(i);
+                        worst_spec_index = i;
+                    end
+                end
+                selected = roulet_for_specs_local(nobjectives,costs_splitedm);                
+                spec_index(local_minimuns_history) = selected;
+                localminsol(local_minimuns_history,:) = parent; %add local minimum to memory                
+  
+                end
+
+                modifyalot = 0;
+            end
+            failcounter = 0;
+        else
+            %********************** 
+            %TEMPERATURE CONTROL
+            %**********************
+            T = cool(T);
+            if (report==2)
+                fprintf(1,'  T = %f \t Cost: %f\n',T,oldenergy);
+            end
+            %reducing local minimum history
+            if (local_minimuns_history > 0 && history_counter > history_counter_max)
+                %keyboard
+                newlast = max(local_minimuns_history-weightmemorysize+1,1);  %max(weightmemorysize,local_minimuns_history)
+                local_minimuns_history = max(local_minimuns_history-newlast,0);
+                spec_index = spec_index(newlast+1:end);
+                localminsol = localminsol(newlast+1:end,:);
+                history_counter = 0;
+                %recalculated old_prox_penalty
+                     old_prox_penalty = 0;
+                     for i=max(1,length(spec_index)-weightmemorysize+1):length(spec_index)                     
+                         old_prox_penalty = old_prox_penalty + increaseweight(spec_index(i))*costs_splitedm(spec_index(i));
+                     end         
+
+
+
+            elseif (local_minimuns_history > 0)
+                history_counter = history_counter + 1;
+            end
+            %controlling temperature
+            if approvecounter_t/itry > 0.6 %too hot
+                %elseif ledgecounter > max_to_ledge
+                T = 0.9*T;
+                ledgecounter = 0;
+                tdecrease_counter = tdecrease_counter + 1;
+                %elseif failcounter_t > max_to_temp
+            %elseif approvecounter_t/itry < 0.1 %too cold
+
+	    
+
+		weightmemorysize = max(0,weightmemorysize-1); %NEW
+
+	  elseif ((approvecounter_t/itry < 0.05)) %too cold
+                T = min(1.5*T,Tinit);
+%                T = Tinit;
+                    sigma = (sigma./sigma).*(options.Initial_Sigma);
+                    failcounter_t = 0;
+                    failcounter = 0;
+                tincrease_counter = tincrease_counter + 1;
+
+		    	    				weightmemorysize = min(weightmemorysize+1,options.weightmemorysize); %NEW
+
+            elseif ((approvecounter_t/itry < 0.3)) %too cold
+%                T = min(1.5*T,Tinit);
+                T = 1.1*T; %1.01
+%                    sigma = (sigma./sigma).*(options.Initial_Sigma);
+                    failcounter_t = 0;
+                    failcounter = 0;
+                    tincrease_counter = tincrease_counter + 1;
+	
+            end
+            total = total + itry;
+            itry = 1;
+            approvecounter_t = 0;
+            %********************** 
+            %UPDATE INCREASE WEIGHT AND PENALTIES
+            %**********************
+%            if (weightmemorysize ~= 0)
+%                increaseweight = mean(bestsolution_costs_splited);% /weightmemorysize;
+%                if (exist('localminsol','var') &&  exist('spec_index','var'))
+%                     old_prox_penalty = 0;
+%                     prox_penalty = 0;
+%                     for i=max(1,length(spec_index)-weightmemorysize):length(spec_index)                     
+%                         old_prox_penalty = old_prox_penalty + increaseweight*costs_splitedm(spec_index(i));
+%                         prox_penalty = prox_penalty + increaseweight*costs_splited(spec_index(i));
+%                     end         
+%                else
+%                     old_prox_penalty = 0;
+%                     prox_penalty = 0;
+%                end 
+%            else
+%                 old_prox_penalty = 0;
+%                 prox_penalty = 0;       
+%            end             
+%            if isinf(prox_penalty); keyboard; end;
+%            if isinf(old_prox_penalty); keyboard; end;
+
+        end %END OF TEMPERATURE CONTROL
+    end %END OF EVENT HANDLER
+
+    %********************** 
+    %OPERATION
+    %**********************
+    x = parent;
+    oldx = x;
+    if modifyalot == 0
+        %********************** 
+        % REGULAR GENERATOR
+        %**********************
+        %multiple_variables = 1+randint(1,1,options.multiple_variables);
+%        multiple_variables = 1+randint(1,1,min(options.multiple_variables,round(options.multiple_variables*1*mean(sigma))));
+        multiple_variables = 1+min(options.multiple_variables,round(options.multiple_variables*10*mean(sigma)));
+%         multiple_variables = 1;
+%        multiple_variables = round(options.multiple_variables);
+        keep_pos(end+1:multiple_variables) = 0;
+%        position = 1:multiple_variables;
+        for i=1:multiple_variables;
+            if (keep_pos(i) == 0 || lock_on == 0)
+%                position(i) = randint(1,1,length(x))+1;
+                 position(i) = randi(length(x),1,1);
+            else
+                position(i) = keep_pos(i);
+            end
+            if (roll > 1)
+                if (x(position(i)) ~= 0)
+                     x(position(i)) = x(position(i))+((x(position(i))*randn*sigma(position(i))));
+%                    x(position(i)) = x(position(i))+((x(position(i))*abs(randn)*sigma(position(i))));
+%                    x(position(i)) = x(position(i))+(  (ub(position(i))-lb(position(i)))/100 *randn*sigma(position(i)) );
+                else
+                    x(position(i)) = (((ub(position(i))-lb(position(i)))/100)*position(i)*randn*sigma(position(i)));
+                end
+            end
+            while (x(position(i))<lb(position(i)) || x(position(i))>ub(position(i)))
+%                if (x(position(i)) <lb(position(i))); x(position(i)) = (oldx(position(i))+lb(position(i)))/2; end;
+                 if (x(position(i)) <lb(position(i))); 
+                     x(position(i)) = mod((lb(position(i))-x(position(i))),(ub(position(i))-lb(position(i))))+lb(position(i));
+                 end;
+ %               if (x(position(i)) >ub(position(i))); x(position(i)) = (oldx(position(i))+ub(position(i)))/2; end;
+                 if (x(position(i)) >ub(position(i)));
+                     x(position(i)) = ub(position(i)) - mod((x(position(i))-ub(position(i))),(ub(position(i))-lb(position(i))));
+                 end
+                sigma(position(i)) = sigma_calculation_local(sigma(position(i)),2,1,10,multiple_variables);
+            end
+        end
+        justcrossedover = 0;
+    elseif modifyalot == 1
+        %********************** 
+        % CROSSOVER GENERATOR
+        %**********************
+        % TEMPERATURE CHANGE
+%        T = (T+Tinit)/2;
+%        T = 1.5*T;
+        % LOG CONTROL      
+        crossover_iteration_start(local_minimuns) = iteration_counter;
+        if (local_minimuns>1)
+            if (~crossover_already_better)
+                crossover_ntobetter(local_minimuns-1) = -1;
+            end
+            crossover_already_better = 0;
+        end        
+        localminsol(local_minimuns_history,:) = parent;
+	%***************
+        % PARENT CHOICE
+        %***************       
+        %decide here who is going to be the parent
+        %if nothing said, parent = current parent
+        %
+	%if (oldenergy > 100*bestsolution_cost) %too big, choose bestsolution
+        if (1) %too big, choose bestsolution
+            parent = bestsolution_x; %global parent
+            oldenergy = bestsolution_cost;        
+            costs_splitedm = bestsolution_costs_splited; %global parent
+        else        
+        %oldparent = parent;
+        costs_splitedm = old_splited;        
+        end
+        %FIND WORST SPEC IN PARENT (CURRENT PARENT OR GLOBAL BEST)
+        worst_spec_index = 1;
+        worst_spec_cost = -inf;
+        for i=1:nobjectives
+            if costs_splitedm(i) > worst_spec_cost
+                worst_spec_cost = costs_splitedm(i);
+                worst_spec_index = i;
+            end
+        end
+        %SELECT ANCHOR TO PERFOR CROSSOVER
+        %selected = worst_spec_index;
+        selected = roulet_for_specs_local(nobjectives,costs_splitedm);             
+        %selected2 = selected;
+        %selected3 = selected;
+        %while (selected2==selected)
+        %   selected2 = roulet_for_specs_local(nobjectives,costs_splitedm);
+        %end
+        %while (selected3==selected || selected3==selected2)
+        %   selected3 = roulet_for_specs_local(nobjectives,costs_splitedm);
+        %end
+
+        %GENERATES NEW SOLUTION RECOMBINING PARENT AND ANCHOR
+        x = recombination_p_local(parent,anchor_x(selected,:));       
+        %x = anchor_x(selected,:);
+        %x = recombination_p_local(anchor_x(selected,:),anchor_x(selected2,:));
+        %x = recombination_n([anchor_x(selected,:);anchor_x(selected2,:);anchor_x(selected3,:)]);
+        %UPDATE SIGMA FROM ANCHOR
+%        sigma = (anchor_sigma(selected,:)+sigma)/2;
+        %sigma = (anchor_sigma(selected,:)+anchor_sigma(selected2,:))/2;
+        %UPDATE LOCAL MINIMUM HISTORY
+
+        spec_index(local_minimuns_history) = selected;          
+        %define increase_weight for selected anchor
+%        increaseweight(selected) = (anchorcost(selected)-oldenergy)/anchorcosts_splited(selected)/1000;
+%        increaseweight(selected) = abs((anchorcost(selected)-oldenergy)/anchorcosts_splited(selected));
+%        increaseweight(selected) = abs((anchorcost(selected)-oldenergy)/costs_splitedm(selected))/100;
+%        increaseweight(selected) = abs(oldenergy)/nobjectives/100;
+%        increaseweight(selected) = abs((anchorcost(selected)-oldenergy))/abs(costs_splitedm(selected))/weightmemorysize;
+
+%if (costs_splitedm(selected)-anchorcosts_splited(selected) ~= 0)
+%	 increaseweight(selected) = 1e-3*(anchorcost(selected)-oldenergy)/(costs_splitedm(selected)-anchorcosts_splited(selected)); %calculated
+%else
+%   increaseweight(selected) = 0;
+%end
+
+%keyboard
+
+%        scale = abs(oldenergy)/sum(abs(costs_splitedm));
+%        increaseweight(selected) = (1/nobjectives)*scale;
+
+
+%        increaseweight(selected) = abs(anchorcosts_splited(selected)-costs_splitedm(selected))*scale;
+
+
+%         increaseweight(selected) = abs(costs_splitedm(selected)-mean(costs_splitedm))*scale/100;
+%        increaseweight(selected) = abs(anchorcosts_splited(selected)-costs_splitedm(selected))*scale;
+%keyboard
+%        increaseweight(selected) = (anchorcost(selected)-oldenergy)/abs(costs_splite
+%         increaseweight(selected) = abs(oldenergy)/nobjectives/weightmemorysize;
+
+%keyboard
+%75*(anchorcost(selected)-oldenergy)/anchorcosts_splited(selected);
+        %APPLY PROX_PENALTY TO (NEW) PARENT BASED ON NEW LOCAL MINIMUM HISTORY
+
+%		weightmemorysize = min(weightmemorysize+1,options.weightmemorysize); %NEW
+	
+	if (weightmemorysize ~= 0)
+            if (exist('localminsol','var') &&  exist('spec_index','var'))
+                %totald = totaldistance_local(parent,localminsol);
+                %old_prox_penalty = (sqrt(abs(newenergy*(0.0001/totald))));
+                %old_prox_penalty = old_prox_penalty*dist_penalty_factor;
+                old_prox_penalty = 0;
+                for i=max(1,length(spec_index)-weightmemorysize+1):length(spec_index)
+                    %old_prox_penalty = old_prox_penalty + increaseweight*costs_splitedm(spec_index(i));
+                    old_prox_penalty = old_prox_penalty + increaseweight(spec_index(i))*costs_splitedm(spec_index(i));
+                end
+            else
+                old_prox_penalty = 0;
+            end
+        else
+            old_prox_penalty = 0;
+        end
+        modifyalot = 0;
+
+                fw = fopen('temperature_sigma.txt','a');
+                fprintf(fw,'Iter: %d Crossover with %d \t Increaseweight: %f \t ac_oldenergy = %f \t ac_incoldenergy = %f',iteration_counter,selected,increaseweight(selected),oldenergy,oldenergy+old_prox_penalty);
+                fprintf(fw,'\n');
+                fclose(fw);
+
+
+%fprintf(1,'CROSSOVER with anchor = %d \n',selected);                                
+%            %PRINT TO FILE
+%            fc=fopen('./output/last_crossover.txt','w');
+%            fprintf(fc,'Last Crossover Event \n');
+%            for i=1:nobjectives
+%                fprintf(fc,'%d = %f \n',i,costs_splitedm(i));
+%            end
+%            fprintf(fc,'\n Selected anchor = %d \n',selected);
+%            fprintf(fc,'\n Worst Spec = %d \n',worst_spec_index);
+%            fclose(fc);
+
+
+        %********************** 
+        % CROSSOVER STOP CONTROL
+        %**********************                
+%        if (local_minimuns>1)
+%            if (length(crossover_ntobetter) > n_crossover_abandon+1)
+%                if (sum(crossover_ntobetter(max(1,length(crossover_ntobetter)-n_crossover_abandon):length(crossover_ntobetter)) ~= -1) == 0)
+%                    if (crossover==2);  keyboard; end;
+%                    disp('changing to crossover mode 2')
+%%keyboard
+%                    crossover = 2;
+%                    local_minimuns = 0;
+%                    local_minimuns_history = 0;
+%                    clear localminsol spec_index crossover_ntobetter;
+%                    parent = bestsolution_x;
+%                    oldenergy = bestsolution_cost;
+%                    old_prox_penalty = 0;
+%%		keyboard
+%                end
+%            end
+%        end
+        %********************** 
+        % RESTART
+        %**********************                
+        if (local_minimuns>1)
+%            if (length(crossover_ntobetter) > n_crossover_abandon+1)
+            if (length(crossover_ntobetter) >= n_crossover_abandon)
+                if (sum(crossover_ntobetter(max(1,length(crossover_ntobetter)-n_crossover_abandon+1):length(crossover_ntobetter)) ~= -1) == 0)
+                    if (crossover==2);  keyboard; end;
+                    disp('changing to crossover mode 2')
+%keyboard
+%keyboard
+%                    crossover = 2;
+                    local_minimuns = 0;
+                    local_minimuns_history = 0;
+                    clear localminsol spec_index crossover_ntobetter;
+                    %parent = bestsolution_x;
+                    parent = lb+(ub-lb).*rand;                     
+                    oldenergy = 9e99;
+                    old_prox_penalty = 0;
+                    T = Tinit;
+                    sigma = (sigma./sigma).*(options.Initial_Sigma);                    
+                end
+            end
+        end
+
+
+
+        justcrossedover = 1;
+    end %END OF GENERATION SECTION
+
+    %********************** 
+    % EVALUATION
+    %**********************                
+    newparam = x;
+%    [cost_solutions,costs_splited,fail,spec_meas]=loss(newparam);
+    %[cost_solutions,costs_splited]=loss(newparam);
+    [cost_solutions,costs_splited]=feval(loss, newparam);
+    newenergy=cost_solutions;
+    %saving p_lists
+%    [plist_x,plist_y] = update_edominated_list(plist_x,plist_y,newparam,spec_meas); %pareto front list
+
+    sumdelta = sum(abs(parent-newparam));
+    %********************** 
+    % STOPS IF MINIMUM POSSIBLE REACHED
+    %**********************                
+    if (newenergy <= minF),
+        parent = newparam;
+        oldenergy = newenergy;
+        old_prox_penalty = prox_penalty;
+        finished = 1;
+        disp('Finishing due to newenergy <= minF')
+        break
+    end
+    %********************** 
+    % SAVE BEST
+    %**********************                
+    if newenergy < bestsolution_cost
+        intmax_notbest_count = 0;
+        bestsolution_cost = newenergy;
+        bestsolution_x = newparam;
+        for i=1:nobjectives
+            bestsolution_costs_splited(i) = costs_splited(i);
+        end
+        %Log of crossover performance
+        if (local_minimuns>1 && ~crossover_already_better && (crossover==1))
+            crossover_ntobetter(local_minimuns) = iteration_counter - crossover_iteration_start(local_minimuns);
+            crossover_already_better = 1;
+        end
+    else
+        intmax_notbest_count = intmax_notbest_count + 1;
+    end
+
+    %********************** 
+    % PROXIMITY COSTS AND INCREASE OF WEIGHTS
+    %**********************                
+    if (weightmemorysize ~= 0)
+        if (exist('localminsol','var') &&  exist('spec_index','var'))
+            %totald = totaldistance_local(newparam,localminsol);
+            %prox_penalty = (sqrt(abs(newenergy*(0.0001/totald))));
+            %prox_penalty = prox_penalty*dist_penalty_factor;
+            prox_penalty = 0;
+            for i=max(1,length(spec_index)-weightmemorysize+1):length(spec_index)
+%                prox_penalty = prox_penalty + increaseweight*costs_splited(spec_index(i));
+                 prox_penalty = prox_penalty + increaseweight(spec_index(i))*costs_splited(spec_index(i));
+            end
+        else
+            prox_penalty = 0;
+            old_prox_penalty = 0;
+        end
+    else
+        old_prox_penalty = 0;
+        prox_penalty = 0;
+    end
+    %********************** 
+    % SIGMA UPDATE
+    %**********************                
+    if (~justcrossedover) %only if hasn't just crossed over
+        for i=1:multiple_variables
+%             sigma(position(i)) = sigma_calculation_local(sigma(position(i)),newenergy+prox_penalty,oldenergy+old_prox_penalty,T,multiple_variables);
+            sigma(position(i)) = sigma_calculation_local(sigma(position(i)),newenergy,oldenergy,T,multiple_variables);
+        end
+    end
+%    sigma
+%    keyboard
+    %********************** 
+    % ACCEPTANCE CRITERION COUNTING WITH PROXIMITY PENALTIES
+    %**********************             
+%keyboard
+    if ((((oldenergy+old_prox_penalty)-(newenergy+prox_penalty))/abs(oldenergy+old_prox_penalty)>0.05) || ((oldenergy-newenergy)/abs(oldenergy)>0.05))
+%    if ((((oldenergy+old_prox_penalty)-(newenergy+prox_penalty))/(oldenergy+old_prox_penalty)>0.005) || (1) )
+        failcounter = 0;
+        failcounter_t = 0;
+    end
+    acceptreason = '0';
+    if (((oldenergy+old_prox_penalty)-(newenergy+prox_penalty) > 0) || ((oldenergy-newenergy)>0))
+        keep_pos = position;
+        parent = newparam;
+        oldenergy = newenergy;
+        old_splited = costs_splited;
+        old_prox_penalty = prox_penalty;
+        success = success+1;
+        consec = 0;
+        approvecounter_t = approvecounter_t + 1;
+        acceptreason = '1';
+    else
+        keep_pos(1:end) = 0;
+        failcounter = failcounter+1;
+        failcounter_t = failcounter_t+1;
+        randomv = rand;            
+        if ( (randomv < exp( ((oldenergy+old_prox_penalty)-(newenergy+prox_penalty))/((abs((oldenergy+old_prox_penalty)))*k*T)      )) || ...
+             (randomv < exp( ((oldenergy                 )-(newenergy             ))/((abs((oldenergy                 )))*k*T)      )) )
+            %for knowing why it was accepted
+            if (randomv < exp( ((oldenergy)-(newenergy))/((abs((oldenergy)))*k*T) )) %just temporary
+               acceptreason = '1';
+            else
+               acceptreason = '2';
+            end
+
+            parent = newparam;
+            oldenergy = newenergy;
+            old_splited = costs_splited;
+            old_prox_penalty = prox_penalty;
+            success = success+1;
+            consec = 0;
+            approvecounter_t = approvecounter_t + 1;
+        else
+            success = 0;
+            consec = consec+1;
+        end
+    end
+
+
+    if (intmax_notbest_count == 0)
+       acceptreason = [acceptreason,'*'];
+    end
+    fw = fopen('temperature_sigma.txt','a');
+    fprintf(fw,'Iter: %d   T: %g   f: %g     finc: %g    AR: %s   FC: %d  MSigma: %g     MVariables: %d     SumD: %f     H: %d     P: %f',iteration_counter,T,newenergy,newenergy+prox_penalty,acceptreason,failcounter,mean(sigma),multiple_variables,sumdelta,local_minimuns_history,approvecounter_t/itry);
+    fprintf(fw,'\n');
+    fclose(fw);
+
+    %********************** 
+    % UPDATE FAILCOUNTER
+    %**********************                
+    if (failcounter < ledge_th)
+        ledgecounter = ledgecounter + 1;
+    else
+        ledgecounter = 0;
+    end
+
+    %********************** 
+    % UPDATE ANCHOR POINTS
+    %**********************                
+    for i=1:length(costs_splited)
+%        if (((costs_splited(i)*anchor_indprop+newenergy*anchor_aofprop) < (anchorcosts_splited(i)*anchor_indprop+anchorcost(i)*anchor_aofprop)) || anchorcost(i) == inf)
+        if (((costs_splited(i)*anchor_indprop+newenergy*anchor_aofprop) < (anchorcosts_splited(i)*anchor_indprop+anchorcost(i)*anchor_aofprop)) || anchorcost(i) == inf)
+            anchorcosts_splited(i) = costs_splited(i);
+            anchor_x(i,:) = newparam;
+            anchorcost(i) = newenergy;
+            %new feature
+            anchor_sigma(i,:) = sigma;
+        end
+    end
+    total_bestcost = bestsolution_cost;
+end   % END OF OPTIMIZATION LOOP
+
+%********************** 
+% OUTPUTS
+%**********************                
+minimum = bestsolution_x;
+fval = bestsolution_cost;
+
+%********************** 
+% OPTIMIZATION REPORT
+%**********************                
+if (report)
+    fprintf(1, '********************************\n');
+    fprintf(1, '*     OPTIMIZATION  REPORT     *\n');
+    fprintf(1, '********************************\n');
+    fprintf(1, '  Minimum value found: %f \n',fval);
+    fprintf(1, '  Number of Crossovers: %d \n',crossover_counter);
+    fprintf(1, '  Number of Temperature Increases: %d \n',tincrease_counter);
+    fprintf(1, '  Number of Fast Temperature Decreases: %d \n',tdecrease_counter);
+    fprintf(1, '********************************\n');
+end
+
+end  % end of function
+
+
+function [totaldistance] = totaldistance_local(newparam,memory)
+totaldistance = 0;
+for i=1:size(memory,1)
+    totaldistance = totaldistance + sum([(newparam-memory(i,:)).^2]);
+end
+end
+
+function [child] = recombination_p_local(a,b)
+p = 0.5;
+p_ka = 0.5;
+p_kb = 0.5;
+if rand < p
+    selector(1) = 1;
+else
+    selector(1) = 0;
+end
+for i=2:size(a,2)
+    if selector(i-1) == 0
+        if rand < p_kb;
+            selector(i) = 0;
+        else
+            selector(i) = 1;
+        end
+    elseif selector(i-1) == 1
+        if rand < p_ka;
+            selector(i) = 1;
+        else
+            selector(i) = 0;
+        end
+    end
+end
+child = a.*selector + b.*~selector;
+end
+
+
+function [child] = recombination_n(parents)
+
+genes = size(parents,2);
+n = size(parents,1);
+%selector = 1+randint(1,genes,n);
+selector = randi(n,1,genes);
+for i=1:genes
+child(i) = parents(selector(i),i);
+end
+%keyboard
+end
+
+
+function [spec_index] = roulet_for_specs_local(nobjectives,bestsolution_costs_splited)
+total_roulet_spec_cost = 0;
+roulet_spec_cost = zeros(1,nobjectives);
+roulet_percentage = zeros(1,nobjectives);
+for i=1:nobjectives
+    if bestsolution_costs_splited(i) <= 0
+        roulet_spec_cost(i) = 0;
+    else
+        total_roulet_spec_cost = total_roulet_spec_cost + bestsolution_costs_splited(i);
+        roulet_spec_cost(i) = bestsolution_costs_splited(i);
+    end
+end
+if (total_roulet_spec_cost == 0)
+    total_roulet_spec_cost = nobjectives;
+    for i=1:nobjectives
+        roulet_spec_cost(i) = i;
+    end
+end
+roulet_percentage(1) = roulet_spec_cost(1)/total_roulet_spec_cost;
+for i=2:nobjectives
+    roulet_percentage(i) =  roulet_percentage(i-1)+roulet_spec_cost(i)/total_roulet_spec_cost;
+end
+p_result = rand;
+spec_index = 1;
+for i=1:nobjectives
+    if roulet_percentage(i) >= p_result
+        spec_index = i;
+        break
+    end
+end
+
+end
+
+function [new_sigma] = sigma_calculation_local(old_sigma,newenergy,oldenergy,temperature,nvars)
+xbad = -0.2; %-2
+xgood = 0.2; %+2
+xequal = 0;
+
+%maxdelta = 1.5;
+%maxdelta = max(8-nvars*0.1,1.01); %maxdelta = max(1.5-nvars*0.005,1.01)
+%maxdelta = max(1.1+nvars/2,10); %maxdelta = max(1.5-nvars*0.005,1.01)
+maxdelta = max(1.1+temperature,10); %maxdelta = max(1.5-nvars*0.005,1.01)
+%maxdelta = max(5-nvars*0.01,1.01); %maxdelta = max(1.5-nvars*0.005,1.01)
+%maxdelta = max(2.5-nvars*0.01,1.01); %maxdelta = max(1.5-nvars*0.005,1.01)
+%maxdelta = max(1.2-nvars*0.001,1.01); %maxdelta = max(1.5-nvars*0.005,1.01)
+%maxdelta = 1.01;
+meandelta = 1;
+%mindelta = min(0.9+nvars*0.001,0.99); %mindelta = min(0.9+nvars*0.005,0.99)
+%mindelta = 0.9;
+%mindelta = min(0.8+nvars*0.01,0.99); %mindelta = min(0.9+nvars*0.005,0.99)
+mindelta = 0.8;
+
+x=(oldenergy-newenergy)/abs(oldenergy);
+if (x<xbad)
+    new_sigma=(mindelta)*old_sigma;
+elseif (x<xequal)
+    new_sigma=(x*(meandelta-mindelta)/(xequal-xbad)+meandelta)*old_sigma;
+elseif (x<xgood)
+    new_sigma=(x*(meandelta-maxdelta)/(xgood-xequal)+maxdelta)*old_sigma;
+else
+    new_sigma=meandelta*old_sigma;
+end
+
+%if (new_sigma < 0.1 && new_sigma > 0)
+%   new_sigma = -0.5;
+%elseif (new_sigma > -0.1 && new_sigma < 0)
+%   new_sigma = 0.5;
+%end
+new_sigma = min(new_sigma,10);
+new_sigma = max(new_sigma,0.0001);
+%new_sigma = old_sigma;
+end
