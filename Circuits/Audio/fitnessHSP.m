@@ -96,7 +96,7 @@ fclose(arq);
 % Captura resultados
 simsucess=0;
 % Primeiro AC
-Meas = LeMeas1('circuito.ma0', 4);
+Meas = LeMeas1('circuito.ma0', 4);      % saidas do .meas ac
 if(length(Meas) > 4)
     simsucess =1;
     maxac=Meas(1); minac=Meas(2); locut=Meas(3); hicut=Meas(4); 
@@ -107,7 +107,7 @@ agudo=abs(hicut-maxac);
 respfreq=maxac-minac;  % swing na resposta em frequencia (dB)
     
 % Segundo Tran 0
-Meas = LeMeas1('circuito.mt0', 7);
+Meas = LeMeas1('circuito.mt0', 7);      % saidas do .meas tran
 if(length(Meas) > 16)
 simsucess =2;
 % Tensao 
@@ -130,7 +130,7 @@ THDcirpeso=sqrt((h2*(2)^2/4)^2+(h3*(3)^2/4)^2+(h4*(4)^2/4)^2+(h5*(5)^2/4)^2+(h6*
 Ganho=20*log10(rmsv/(1.1/sqrt(2)));
 OutPow=rmsv*rmsi;                         
         
-% Segundo Tran 1 (slew)
+% Segundo Tran 1 (slew)         % saidas .meas da segunda tran
 Meas = LeMeas1('circuito.mt1', 4);
 if(length(Meas) > 4)
 simsucess=3;
