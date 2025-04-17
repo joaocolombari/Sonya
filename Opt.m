@@ -22,7 +22,7 @@ function varargout = Opt(varargin)
 
 % Edit the above text to modify the response to help CirOp
 
-% Last Modified by GUIDE v2.5 23-Jan-2015 13:07:15
+% Last Modified by GUIDE v2.5 16-Apr-2025 21:10:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -122,14 +122,16 @@ contents = cellstr(get(handles.list2,'String'));
 simpr = contents{get(handles.list2,'Value')};
 switch simpr
     case 'HSP'
-      modelsD = 'ModelsHSP';
-      fitness = 'fitnessHSP';
-    case 'LTSP'
-      modelsD = 'ModelsHSP';
-      fitness = 'fitnessHSP';
+        modelsD = 'ModelsHSP';
+        fitness = 'fitnessHSP';
+
     case 'Eldo'
-      modelsD = 'ModelsEldo';
-      fitness = 'fitnessEldo';
+        modelsD = 'ModelsEldo';
+        fitness = 'fitnessEldo';
+
+    case 'LTspice'
+        modelsD = 'ModelsLTspice';
+        fitness = 'fitnessLTspice';
 end;
 
 eval(['cd ', 'Circuits', slash, family]);
