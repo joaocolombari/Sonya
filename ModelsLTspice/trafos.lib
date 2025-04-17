@@ -1,0 +1,1266 @@
+*Biblioteca de Trafos
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+***
+*
+.subckt LT700 P1 P2 Sp1 Sp2 ct
+*1 W push-pull bjt output audio trafo
+*1,2k (ct) to 3,2 ohm
+L1 ct N003 .18424
+L3 N002 Sp2 .00225
+R2 P1 N001 31.5
+L2 N001 ct .18424
+R3 N002 Sp1 .38
+R4 N003 P2 31.5
+Rfuga 0 ct 10meg
+k1 L1 L2 1
+k2 L1 L3 .99
+k3 L2 L3 .99
+.backanno
+.ends LT700
+*
+***
+*
+.subckt LT44 P1 P2 Sp1 Sp2 ct
+* push-pull bjt driver trafo
+* 20k to 1k (ct)
+R3 P1 N002 480
+L3 ct N003 .18424
+L1 N002 P2 13.233
+R6 N001 Sp1 58
+L2 N001 ct .18424
+R7 Sp2 N003 58
+Rfuga1 P2 ct 10meg
+k1 L2 L3 1
+k2 L1 L2 .99
+k3 L1 L3 .99
+.backanno
+.ends LT44
+*
+***
+*
+.SUBCKT P2647 P1 Sg1 B+ Sg2 P2 16R 8R 4R O
+* Push Pull transformer, with Ultralinear taps at 43%
+* 6k6 to 8 ohms, 3db 15 to 60Khz
+* Parmeko P2647
+*
+LP1 1 2 1.616170794H ; PRIMARY
+LS1 2 B+ 0.95038974H ; primary, scrren grid tap portion
+LS2 B+ 3 0.95038974H
+LP2 3 4 1.616170794H
+*LA1 6 O 0.025088207H ; SPEAKER SECONDARY
+*LA2 6 7 0.003674083H
+*LA3 7 O 0.021414124H
+LA1 5 6 0.00420975H ; SPEAKER SECONDARY
+LA2 6 7 0.00208623H
+LA3 7 O 0.012683925H
+KALL LP1 LS1 LS2 LP2 LA1 LA2 LA3 0.999199994;
+RP1 P1 1 39.6
+RP2 Sg1 2 20.0
+RP3 Sg2 3 20.0
+RP4 P2 4 39.6
+RS1 16R 5 0.1
+RS2 8R 6 0.1
+RS3 4R 7 0.1
+Rfuga1 B+ P1 1G
+Rfuga2 B+ P2 1G
+Rfuga3 B+ Sg1 1G
+Rfuga4 B+ Sg2 1G
+Rfuga5 B+ O 10G
+Rfuga6 16R 8R 1G
+Rfuga7 8R 4R 1G
+Rfuga8 4R O 1G
+.ENDS P2647
+*
+***
+*
+.SUBCKT JT45C-7H 1 2
+Ls 1 3 7
+Rs 3 2 160
+.ENDS JT45C-7H
+*
+***
+*
+*390 V +390V (180 mA) + 6,3 V (4A); 5V (3A)  180 VA.
+.SUBCKT trafo15 ac1 ac2 o1 ct o2 o6 7 o5 9
+*
+L1 N001 ac2 10
+L2 N002 ct 35.494
+L3 ct N004 35.494
+L4 N001 N003 .1
+R2 ac1 N003 1.72
+R3 N002 o1 35
+R4 N004 o2 35
+R5 N001 ac2 5k
+R6 ac1 0 1g
+R7 0 ac2 1g
+R8 N002 N001 1g
+R9 N004 ac2 1g
+L5 7 N005 .00898
+L6 9 N006 .00569
+R11 N005 o6 2.2m
+R12 N006 o5 8m
+R15 ac2 7 1g
+R16 ac2 9 1g
+Rh1 o6 7 1.8
+Rh2 o5 9 2.6316
+K1 L1 L2 L3 L5 L6 .997
+*
+.ENDS trafo15
+*
+***
+*
+*410 V+410V (180 mA) + 6,3 V (4A); 5V (3A)  190VA.
+.SUBCKT trafo16 ac1 ac2 o1 ct o2 o6 7 o5 9
+*
+L1 N001 ac2 10
+L2 N002 ct 39.87
+L3 ct N004 39.87
+L4 N001 N003 .1
+R2 ac1 N003 1.72
+R3 N002 o1 36.8
+R4 N004 o2 36.8
+R5 N001 ac2 5k
+R6 ac1 0 1g
+R7 0 ac2 1g
+R8 N002 N001 1g
+R9 N004 ac2 1g
+L5 7 N005 .00898
+L6 9 N006 .00569
+R11 N005 o6 2.2m
+R12 N006 o5 8m
+R15 ac2 7 1g
+R16 ac2 9 1g
+Rh1 o6 7 1.8
+Rh2 o5 9 2.6316
+K1 L1 L2 L3 L5 L6 .997
+*
+.ENDS trafo16
+*
+***
+*
+.SUBCKT TRAFO13 1 2 3 4 5 6 7
+Rpri1 1 10 1.702
+Rpri2 30 3 1.702
+Lpri1 10 2 5.305
+Lpri2 4 30 5.305
+Rnuc1 10 2 7.11765k
+Rnuc2 4 30 7.11765k
+Rsec1 20 5 .3737
+Rsec2 7 40 .3737
+Lsec1 20 6 0.30535724
+Lsec2 6 40 0.30535724
+Rleak1 1 0 1g
+Rleak2 0 3 1g
+Rleak3 40 30 1g
+Rleak4 10 20 1g
+C2 5 7 100p
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 Lsec2 .9998
+.backanno
+.ends TRAFO13
+*
+***
+*
+.SUBCKT TRAFO14 1 2 3 4 5 6 7
+Rpri1 1 10 1.702
+Rpri2 30 3 1.702
+Lpri1 10 2 5.305
+Lpri2 4 30 5.305
+Rnuc1 10 2 7.11765k
+Rnuc2 4 30 7.11765k
+Rsec1 20 5 .37301
+Rsec2 7 40 .37301
+Lsec1 20 6 0.21678
+Lsec2 6 40 0.21678
+Rleak1 1 0 1g
+Rleak2 0 3 1g
+Rleak3 40 30 1g
+Rleak4 10 20 1g
+C2 5 7 100p
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 Lsec2 .9998
+.backanno
+.ends TRAFO14
+*
+***
+*
+.SUBCKT TRAFO6L6 P1 ST1 CT ST2 P2 S1 S2
+R1 P1 1 29.7
+L1 1 ST1 4.63
+R2 ST1 2 27.7
+L2 2 CT 2.9
+R3 CT 3 26.9
+L3 3 ST2 2.9
+R4 ST2 4 37.9
+L4 4 P2 4.62
+R5 S1 5 .487
+L5 5 S2 0.0919
+KALL L1 L2 L3 L4 L5 .9988
+Rfuga1 CT S1 200meg
+Rfuga2 CT S2 200meg
+Rfuga3 S2 S1 200meg
+.ENDS TRAFO6L6
+*
+***
+*
+.SUBCKT trafo11 1 2 3 4 5 6 7
+*
+* Primary
+*
+Rpri1   1       10      2.9
+Lpri1   10      2       1.1546H
+Rpri2   2       11      3.1
+Lpri2   11      3       1.187H
+Rleak1  0       1       1000MEG
+Rleak2  0       2       1000MEG
+Rleak3  0       3       1000MEG
+*
+* HV Secondary
+*
+Rsec1   4       20      18
+Lsec1   20      21      4.8H
+Rsec2   21      22      7.5
+Lsec2   22      5       1.17H
+Rleak4  0       4       1000MEG
+Rleak5  0       5       1000MEG
+*
+* Heater secondary
+*
+Rsec3   6       30      0.025
+Lsec3   30      31      1.09mH
+Rsec4   31      32      0.025
+Lsec4   32      7       1.09mH
+Rleak6  0       6       1000MEG
+Rleak7  0       7       1000MEG
+*
+* Coupling
+*
+K1      Lpri1 Lpri2 Lsec1 Lsec2 Lsec3 Lsec4 0.997
+.ENDS trafo11
+*
+***
+*
+.SUBCKT trafo10 1 2 3 4 5 6 7 8
+*
+* Primary
+*
+Rpri1   1       10      2.9
+Lpri1   10      2       1.1546H
+Rpri2   2       11      3.1
+Lpri2   11      3       1.187H
+Rleak1  0       1       1000MEG
+Rleak2  0       2       1000MEG
+Rleak3  0       3       1000MEG
+*
+* HV Secondar1
+Rsec11   4       20      18
+Lsec11   20      21      4.8H
+Rsec21   21      22      7.5
+Lsec21   22      5       1.17H
+Rleak41  0       4       1000MEG
+Rleak51  0       5       1000MEG
+*
+* HV Secondary2
+*
+Rsec12   5       40      18
+Lsec12   40      41      4.8H
+Rsec22   41      42      7.5
+Lsec22   42      8       1.17H
+Rleak42  0       5       1000MEG
+Rleak52  0       8       1000MEG
+*
+* Heater secondar
+*
+Rsec3   6       30      0.025
+Lsec3   30      31      1.09mH
+Rsec4   31      32      0.025
+Lsec4   32      7       1.09mH
+Rleak6  0       6       1000MEG
+Rleak7  0       7       1000MEG
+*
+* Coupling
+*
+K1      Lpri1 Lpri2 Lsec11 Lsec21 Lsec12 Lsec22 Lsec3 Lsec4 0.997
+.ENDS trafo10
+*
+***12V + 12V 36VA 18%
+*
+.SUBCKT trafo12V 1 2 3 4
+Rpri 1 10 8.03
+Lpri 10 2 8.423H
+Rnuc 10 2 40.33333k
+Rleak1 0 1 1000MEG
+Rleak2 0 2 1000MEG
+Rsec   3 20 0.76478
+Lsec   20 4 0.11253H
+Rleak4 0 4 1000MEG
+Rleak3 0 3 1000MEG
+Kall Lpri Lsec .997
+.ENDS trafo12V
+*
+***15V + 15V 60VA 15%
+*
+.SUBCKT trafo15V 1 2 3 4
+Rpri 1 10 8.03
+Lpri 10 2 8.423H
+Rnuc 10 2 40.33333k
+Rleak1 0 1 1000MEG
+Rleak2 0 2 1000MEG
+Rsec   3 20 .4911
+Lsec   20 4 0.16363H
+Rleak4 0 4 1000MEG
+Rleak3 0 3 1000MEG
+Kall Lpri Lsec .997
+.ENDS trafo15V
+*
+*
+*** Plitron 38V + 38V; 500VA; 6,5%; 6,579A
+*
+.SUBCKT plitron 1 2 3 4 5 6 7
+Rpri1 1 10 2.204
+Lpri1 10 2 5.305H
+Rpri2 3 11 2.204
+Lpri2 11 4 5.305H
+Rnuc1 10 2 5.378k
+Rnuc2 11 4 5.378k
+Rleak1 0 1 1000MEG
+Rleak2 0 2 1000MEG
+Rsec1   5 50 .08514
+Rsec2   70 7 .08514
+Lsec1   50 6 0.72538H
+Lsec2   6 70 0.72538H
+Rleak4 0 4 1000MEG
+Rleak3 0 3 1000MEG
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 Lsec2 .9998
+.ENDS plitron
+*
+***
+*
+.SUBCKT 73tran15 1 2 3 4 5 6
+*
+* Primary
+*
+Lleak1  1       20      2mH
+Lpri1   20      21      150H
+Rpri1   21      2       186
+Cpri1   1       2       120p
+Lleak2  2       22      2mH
+Lpri2   22      23      150H
+Rpri2   23      3       201
+Cpri2   2       3       120p
+*
+* Secondary
+*
+Lleak3  5       24 10uH
+Lsec1   24      25  0.6H
+Rsec1   25      6   0.8
+Lleak4  4       27 10uH
+Lsec2   27      28  0.3H
+Rsec2   28      5   0.4
+R1 27 28 1G
+R2 4 27 1G
+R3 5 24 1G
+R4 24 25 1G
+R5 2 6 1G
+*
+Kcoup   Lpri1 LPri2 Lsec1 Lsec2 1.0
+.ENDS 73tran15
+*
+***
+*
+.SUBCKT trafo12 1 2 3 4 5 6 7 8 9 10 11
+*
+* Primary
+*
+Lleak1  1       20      10mH
+Lpri1   20      21      120H
+Rpri1   21      2       13.0
+Lleak2  3       22      10mH
+Lpri2   22      23      120H
+Rpri2   23      4       11.7
+Rfuga1  20      0       1G
+Rfuga2  22      0       1G
+*
+* Secondary (28V off load)
+*
+Lsec28	5	25	6.5H
+Rsec28  25      6	2.6
+*
+* Secondary (313V off load)
+*
+Lsec313	7	26	816.4H
+Rsec313 26	8	75.5
+*
+* Secondary (7.3V off load, centre tapped)
+*
+Lsec73a	9	27	111mH
+Rsec73a 27	10	0.15
+Rsec73b	10	28	0.15
+Lsec73b	28	11	111mh
+Rfuga73a 9 10 1G
+Rfuga73b 11 10 1G
+*
+Kcoup   Lpri1 LPri2 Lsec28 Lsec313 Lsec73a Lsec73b 1.0
+.ENDS trafo12
+*
+***
+*
+.SUBCKT 73tran50 1 2 3 4 5
+Lprim1 1 2 50H
+C1 1 3 500p
+Lprim2 2 3 50H
+Lsec 4 5 0.47H
+Rfuga1 4 2 1G
+Rfuga2 5 2 1G
+K1 Lprim1 Lprim2 Lsec 0.9995
+.ENDS 73tran50
+*
+***
+*
+.SUBCKT PAT4006CFB 1 2 3 4 5 6 7 8 9 10
+* PLITRON PAT-4006-CFB OUTPUT TRANSFORMER 2KOHM UL PRIMARY
+* OL NUMBERS CORRESPOND TO TRANSFORMER SCHEMATIC.
+.PARAM PRIML=392.5     ; TOTAL PRIMARY L (FROM SPECS).
+.PARAM LRATIO={5/2000} ; INDUCTANCE RATIO: (5 OHMS)/(PRIMARY).
+.PARAM QFCTR=400000     ; Q-FACTOR: PRIMARY SHUNT L/LEAKAGE L.
+LP1 1 2   {PRIML*.09} ; PRIMARY
+LP2 2 3   {PRIML*.04}
+LP3 3 4   {PRIML*.04}
+LP4 4 5   {PRIML*.09}
+CP1 1 5   .342NF      ; CAPACITANCE FROM SPECS
+LP5 8 7   {PRIML*LRATIO/4}  ; 1/2 SPEAKER SECONDARY
+LP6 7 6   {PRIML*LRATIO/4}  ; " "
+LP7 10 11 {PRIML*LRATIO}    ; 1/2 FBK WINDING
+LP8 11 9  {PRIML*LRATIO}    ; " "
+KALL LP1 LP2 LP3 LP4 LP5 LP6 LP7 LP8 .9999987 ; 1-1/(2*403600) AWESOME!
+Rfuga1 3 6 200meg
+Rfuga2 3 8 200meg
+Rfuga3 6 8 200meg
+Rfuga4 3 11 200meg
+Rfuga5 10 9 200meg
+.ENDS PAT4006CFB
+*
+***
+*
+.SUBCKT PAT4006 1 2 3 4 5 6 7 8
+* PLITRON PAT-4006 OUTPUT TRANSFORMER 1.885KOHM UL PRIMARY
+* OL NUMBERS CORRESPOND TO TRANSFORMER SCHEMATIC.
+.PARAM PRIML=530     ; TOTAL PRIMARY L (FROM SPECS).
+.PARAM LRATIO={5/1885} ; INDUCTANCE RATIO: (5 OHMS)/(PRIMARY).
+.PARAM QFCTR=294410     ; Q-FACTOR: PRIMARY SHUNT L/LEAKAGE L.
+LP1 1 2   {PRIML*.09}     ; PRIMARY
+LP2 2 3   {PRIML*.04}
+LP3 3 4   {PRIML*.04}
+LP4 4 5   {PRIML*.09}
+CP1 1 5   585pF      ; CAPACITANCE FROM SPECS
+LP5 8 7   {PRIML*LRATIO/4}  ; 1/2 SPEAKER SECONDARY
+LP6 7 6   {PRIML*LRATIO/4}  ; " "
+KALL LP1 LP2 LP3 LP4 LP5 LP6 .9999983 ; 1-1/(2*294410) AWESOME!
+Rfuga1 3 6 200meg
+Rfuga2 3 8 200meg
+Rfuga3 6 8 200meg
+.ENDS PAT4006
+*
+***
+*
+.SUBCKT PAT4002 1 2 3 4 5 6 7 8
+* PLITRON PAT-4002 OUTPUT TRANSFORMER 5.878KOHM UL PRIMARY
+* OL NUMBERS CORRESPOND TO TRANSFORMER SCHEMATIC
+.PARAM PRIML=535     ; TOTAL PRIMARY L (FROM SPECS)
+.PARAM LRATIO={5/5878} ; INDUCTANCE RATIO: (5 OHMS)/(PRIMARY)
+.PARAM QFCTR=144610     ; Q-FACTOR: PRIMARY SHUNT L/LEAKAGE L
+LP1 1 2   {PRIML*.09}     ; PRIMARY
+LP2 2 3   {PRIML*.04}
+LP3 3 4   {PRIML*.04}
+LP4 4 5   {PRIML*.09}
+CP1 1 5   613pF      ; CAPACITANCE FROM SPECS
+LP5 8 7   {PRIML*LRATIO/4}  ; 1/2 SPEAKER SECONDARY
+LP6 7 6   {PRIML*LRATIO/4}  ; " "
+KALL LP1 LP2 LP3 LP4 LP5 LP6 .99999654 ; 1-1/(2*144610) AWESOME!
+Rfuga1 3 6 200meg
+Rfuga2 3 8 200meg
+Rfuga3 6 8 200meg
+.ENDS PAT4002
+*
+***
+*
+.SUBCKT PAT4004 1 2 3 4 5 6 7 8
+* PLITRON PAT-4004 OUTPUT TRANSFORMER 2.756KOHM UL PRIMARY
+* OL NUMBERS CORRESPOND TO TRANSFORMER SCHEMATIC.
+.PARAM PRIML=490     ; TOTAL PRIMARY L (FROM SPECS).
+.PARAM LRATIO={5/2756} ; INDUCTANCE RATIO: (5 OHMS)/(PRIMARY).
+.PARAM QFCTR=188510     ; Q-FACTOR: PRIMARY SHUNT L/LEAKAGE L.
+LP1 1 2   {PRIML*.09}     ; PRIMARY
+LP2 2 3   {PRIML*.04}
+LP3 3 4   {PRIML*.04}
+LP4 4 5   {PRIML*.09}
+CP1 1 5   558pF      ; CAPACITANCE FROM SPECS
+LP5 8 7   {PRIML*LRATIO/4}  ; 1/2 SPEAKER SECONDARY
+LP6 7 6   {PRIML*LRATIO/4}  ; " "
+KALL LP1 LP2 LP3 LP4 LP5 LP6 .999997347 ; 1-1/(2*188510) AWESOME!
+Rfuga1 3 6 200meg
+Rfuga2 3 8 200meg
+Rfuga3 6 8 200meg
+.ENDS PAT4004
+*
+***
+*
+.SUBCKT A470 1 2 3 4 5 6 7 8 9  ; PARAMETERS FOR A470:
++PARAMS: LPRIM=60 LLKG=.040 RPRIM=187.5 CPRIM=1.04NF LRATIO={4/4300}
+* ERIC BARBOUR ARTICLE:  ~233H TOTAL PRIMARY L FOR A470.
+* MARK 3: LPRIM=60 LLKG=.040 RPRIM=125 CPRIM=1.04NF LRATIO={4/4300}
+* LPRIM  IS THE TOTAL PRIMARY L (VARIES WITH MEASUREMENT)
+* LLKG   IS THE LEAKAGE L (MEASURABLE: CONSISTENT)
+* RPRIM  IS THE TOTAL PRIMARY R
+* CPRIM  IS THE MEASURED PRIMARY CAPACITANCE
+* LRATIO IS THE INDUCTANCE RATIO: (4 OHMS)/(PRIMARY Z)
+.PARAM QFCTR={LPRIM/LLKG}  ; Q-FACTOR
+CS1 1 5    {CPRIM}     ; PRIMARY CAPACITANCE
+RS1 1 5    300K        ; SHUNT R FOR HIGH FREQUENCY EFFECTS
+LP1 1 12   {LPRIM*.09} ; .7164H  ; PRIMARY
+RP1 12 2   {RPRIM*.5}
+LP2 2 3    {LPRIM*.04} ; .3184H
+LP3 3 4    {LPRIM*.04}
+LP4 4 45   {LPRIM*.09}
+RP4 45 5   {RPRIM*.5}
+LP5 7 6    {.34315*LPRIM*LRATIO} ; 8-16  OHM WINDING: (2-SQRT(2))^2
+LP6 8 7    {.17157*LPRIM*LRATIO} ; 4-8   OHM WINDING: (SQRT(2)-1)^2
+LP7 9 8    {LPRIM*LRATIO}        ; COM-4 OHM WINDING
+Rfuga1 6 9 1G
+Rfuga2 7 9 1G
+Rfuga3 8 9 1G
+KALL LP1 LP2 LP3 LP4 LP5 LP6 LP7 {1-1/(2*QFCTR)}  ; COUPLING
+.ENDS A470
+*
+***
+*
+.SUBCKT A431 1 2 3 4 5 6 7 8 9  ; PARAMETERS FOR A431:
++PARAMS: LPRIM=60 LLKG=.040 RPRIM=125 CPRIM=1.04NF LRATIO={4/4300}
+* ERIC BARBOUR ARTICLE:  ~233H TOTAL PRIMARY L FOR A431.
+* MARK 3: LPRIM=60 LLKG=.040 RPRIM=125 CPRIM=1.04NF LRATIO={4/4300}
+* LPRIM  IS THE TOTAL PRIMARY L (VARIES WITH MEASUREMENT)
+* LLKG   IS THE LEAKAGE L (MEASURABLE: CONSISTENT)
+* RPRIM  IS THE TOTAL PRIMARY R
+* CPRIM  IS THE MEASURED PRIMARY CAPACITANCE
+* LRATIO IS THE INDUCTANCE RATIO: (4 OHMS)/(PRIMARY Z)
+.PARAM QFCTR={LPRIM/LLKG}  ; Q-FACTOR
+CS1 1 5    {CPRIM}     ; PRIMARY CAPACITANCE
+RS1 1 5    300K        ; SHUNT R FOR HIGH FREQUENCY EFFECTS
+LP1 1 12   {LPRIM*.09} ; .7164H  ; PRIMARY
+RP1 12 2   {RPRIM*.5}
+LP2 2 3    {LPRIM*.04} ; .3184H
+LP3 3 4    {LPRIM*.04}
+LP4 4 45   {LPRIM*.09}
+RP4 45 5   {RPRIM*.5}
+LP5 7 6    {.34315*LPRIM*LRATIO} ; 8-16  OHM WINDING: (2-SQRT(2))^2
+LP6 8 7    {.17157*LPRIM*LRATIO} ; 4-8   OHM WINDING: (SQRT(2)-1)^2
+LP7 9 8    {LPRIM*LRATIO}        ; COM-4 OHM WINDING
+Rfuga1 6 9 1G
+Rfuga2 7 9 1G
+Rfuga3 8 9 1G
+KALL LP1 LP2 LP3 LP4 LP5 LP6 LP7 {1-1/(2*QFCTR)}  ; COUPLING
+.ENDS A431
+*
+***
+*
+.SUBCKT PAT4171 1 2
+Ls 1 3 20
+Rs 3 2 50
+.ENDS PAT4171
+*
+***
+*
+.SUBCKT PAT4172 1 2
+Ls 1 3 10
+Rs 3 2 50
+.ENDS PAT4172
+*
+***
+*
+.SUBCKT PAT4172x 1 2
+Ls 1 3 10
+Rs 3 2 200
+.ENDS PAT4172x
+*
+***
+*
+.SUBCKT PAT4172y 1 2
+Ls 1 3 5
+Rs 3 2 140
+.ENDS PAT4172y
+*
+***
+*
+.SUBCKT PAT4173 1 2
+Ls 1 3 10
+Rs 3 2 50
+.ENDS PAT4173
+*
+***
+*
+.SUBCKT PAT4174 1 2
+Ls 1 3 10
+Rs 3 2 20
+.ENDS PAT4174
+*
+***
+*
+.SUBCKT PAT4178 1 2
+Ls 1 3 10
+Rs 3 2 30
+.ENDS PAT4178
+*
+***
+*
+.SUBCKT 159M 1 2
+Ls 1 3 15
+Rs 3 2 256
+.ENDS 159M
+*
+***
+*
+.SUBCKT 159P 1 2
+Ls 1 3 10
+Rs 3 2 155
+.ENDS 159P
+*
+***
+*
+.SUBCKT 159Q 1 2
+Ls 1 3 7
+Rs 3 2 100
+.ENDS 159Q
+*
+***
+*
+.SUBCKT 5KSE P1 P2 Sp1 Sp2
+* Single ended audio transformer
+* 5k to 8 ohm, 10 to 40KHz
+*
+LP1 10 P2 40.26021568H ; PRIMARY
+LSA 20 Sp2 0.064416345H ; SPEAKER SECONDARY
+KALL LP1 LSA 0.999499875 ;
+RP1 P1 10 56
+RS Sp1 20 .1
+Rfuga 10 20 1G
+.ENDS 5KSE
+*
+***
+*
+.SUBCKT 1650R P1 Sg1 B Sg2 P2 O16 O8 O4 Com
+* Push Pull transformer, with Ultralinear taps at 40%
+* 5000 to 16 ohms, with 8 ohm and 4 ohm taps, 3db 15 to 60Khz
+* Hammond 1650R
+*
+LP1 1 2 2.409088925H ; PRIMARY
+LS1 2 B 1.070706189H ; primary, scrren grid tap portion
+LS2 B 3 1.070706189H
+LP2 3 4 2.409088925H
+LA1 5 6 0.007348166H ; SPEAKER SECONDARY
+LA2 6 7 0.003674083H
+LA3 7 Com 0.021414124H
+KALL LP1 LS1 LS2 LP2 LA1 LA2 LA3 0.999199994;
+RP1 P1 1 30.0
+RP2 Sg1 2 15.0
+RP3 Sg2 3 15.0
+RP4 P2 4 30.0
+RS1 O16 5 0.1
+RS2 O8 6 0.1
+RS3 O4 7 0.1
+Rfuga1 B P1 1G
+Rfuga2 B P2 1G
+Rfuga3 B Sg1 1G
+Rfuga4 B Sg2 1G
+Rfuga5 B Com 1G
+Rfuga6 O16 O8 1G
+Rfuga7 O8 O4 1G
+Rfuga8 O4 Com 1G
+.ENDS 1650R
+*
+***
+*
+.SUBCKT TO330 1 2 3 4 5
+ +PARAMS: LPRIM=250H  LLKG=7mH RPRIM=240 CPRIM=3NF LRATIO={8/4500}
+ .PARAM QFCTR={LPRIM/LLKG}  ; Q-FACTOR.
+ *--- 1st half
+ RP1 1 11   {RPRIM}
+ LPleak1 11 12   {LLKG}
+ LP1 12 5   {LPRIM}
+ CS1 12 5   {CPRIM}
+ *--- second half
+ RP2 2 21   {RPRIM}
+ LPleak2 21 22   {LLKG}
+ LP2 5 22  {LPRIM}
+ CS2 22 5  {CPRIM}
+*--- secundary
+ LP3 3 4  {LPRIM*LRATIO}
+*--- coupling
+ KALL LP1 LP2 LP3 {1-1/(QFCTR)}
+ .ENDS TO330
+*
+***
+*
+.SUBCKT LXFMRCT 1  2   3   4   5
+*              P+ P-  S+  CT  S-
++ PARAMS:
++ NR1=1         ;Turns-ratio 1st secondary winding
++ NR2=1         ;Turns-ratio 2nd secondary winding
++ LP=1MH        ;Primary inductance
++ MK=0.999      ;Mutual coupling coefficient
++ RP=1U         ;Primary series resistance
++ RS1=1u        ;1st secondary series resistance
++ RS2=1u        ;2nd secondary series resistance
++ RPP=100MEG    ;Primary snubbing parallel resistance
++ RSP=100MEG    ;Secondary snubbing parallel resistance
+RP 1 10 {RP+1U}
+LP 10 2 {LP}
+RPP 10 2 {RPP}
+RS1 3 11 {RS1+1U}
+LS1 11 4 {LP*NR1*NR1}
+RSP1 11 4 {RSP}
+LS2 4 12 {LP*NR2*NR2}
+RSP2 4 12 {RSP}
+RS2 5 12 {RS2+1U}
+K1 LP LS1 LS2 {MK}
+.ENDS LXFMRCT
+*
+****************************************************************
+*
+* Trace Elliot 50W output transformer, part 73-TRAN-50WOP
+*
+* D.Munro 10/4/97
+*
+* Pin 1   anode'
+*     2   HT
+*     3   anode''
+*
+*     4,5 output 16 ohm
+*
+* Note that altough the transformer is tapped 4/8/16 ohms, only the
+* 16 ohm output is modelled.
+*
+.SUBCKT trace50 1 2 3 4 5
+L12	in1	in2	41.02m
+C1_1	in2	2	-797.5p
+Rdc1	in1	N61	60.55
+Lmag	in1	2	99.45
+Rcore	in1	2	2.458Meg
+Rac1	N61	1	63.93
+Lac1	N61	1	0.1083
+L23	in2	in3	78.28m
+C2_23	3	5	831.3p
+C3_23	3	N43	503.0p
+Efwd2	N82	3	in2	2	1.000
+Vsens2	N82	N42
+Ffbk2	in2	2	Vsens2	1.000
+C1_2	N82	3	251.9p
+Rdc2	N42	N62	61.68
+Rac2	N62	2	62.58
+Lac2	N62	2	0.2074
+Efwd3	N83	5	in3	2	0.1352
+Vsens3	N83	N43
+Ffbk3	in3	2	Vsens3	0.1352
+C1_3	N83	5	2.426p
+Rdc3	N43	N63	0.8561
+Rac3	N63	4	1.501
+Lac3	N63	4	694.1u
+.ENDS trace50
+*
+*****************************************************************
+*
+* Trace Elliot 15W output transformer, 8k primary, 16/8 ohm sec.
+* Part no. 73 TRAN 15W OP
+*
+* [1] Red   ---. ||
+*              ) || .--- Green (16 ohm)  [4]
+*              ) || (
+*              ) || (
+* [2] White ---. || .--- Yellow (8 ohm)  [5]
+*              ) || (
+*              ) || (
+*              ) || .--- Brown           [6]
+* [3] Blue  ---. ||
+*
+.SUBCKT trace15 1 2 3 4 5 6
+*
+* Primary
+*
+Lleak1  1       20      2mH
+Lpri1   20      21      150H
+Rpri1   21      2       186
+Cpri1   1       2       120p
+Lleak2  2       22      2mH
+Lpri2   22      23      150H
+Rpri2   23      3       201
+Cpri2   2       3       120p
+*
+* Secondary
+*
+Lleak3  5       24	10uH
+Lsec1   24      25      0.6H
+Rsec1   25      6       0.8
+Lleak4  4	    27	10uH
+Lsec2	  27      28	0.3H
+Rsec2	  28	    5	      0.4
+
+Kcoup   Lpri1 LPri2 Lsec1 Lsec2 1.0
+.ENDS trace15
+*
+*************************************************************
+*
+*455V+455V (140 mA) + 6,3 V (4A); 5V (3A)  220VA.
+.SUBCKT trafo20 ac1 ac2 o1 ct o2 o6 7 o5 9
+*
+L1 N001 ac2 10
+L2 N002 ct 47.48
+L3 ct N004 47.48
+L4 N001 N003 .1
+R2 ac1 N003 1.72
+R3 N002 o1 37.5
+R4 N004 o2 37.5
+R5 N001 ac2 5k
+R6 ac1 0 1g
+R7 0 ac2 1g
+R8 N002 N001 1g
+R9 N004 ac2 1g
+L5 7 N005 .008875
+L6 9 N006 .005608
+R11 N005 o6 2.2m
+R12 N006 o5 8m
+R15 ac2 7 1g
+R16 ac2 9 1g
+Rh1 o6 7 1.02606G
+Rh2 o5 9 2.5G
+K1 L1 L2 L3 L5 L6 .997
+*
+.ENDS trafo20
+*
+***
+*
+*480V+480V (140 mA) + 6,3 V (4A); 5V (3A)  250VA.
+.SUBCKT trafo21 ac1 ac2 o1 ct o2 o6 7 o5 9
+*
+L1 N001 ac2 10
+L2 N002 ct 52.89
+L3 ct N004 52.89
+L4 N001 N003 .1
+R2 ac1 N003 1.72
+R3 N002 o1 37.5
+R4 N004 o2 37.5
+R5 N001 ac2 5k
+R6 ac1 0 1g
+R7 0 ac2 1g
+R8 N002 N001 1g
+R9 N004 ac2 1g
+L5 7 N005 .0089865
+L6 9 N006 .005682
+R11 N005 o6 2.2m
+R12 N006 o5 8m
+R15 ac2 7 1g
+R16 ac2 9 1g
+Rh1 o6 7 1.02606G
+Rh2 o5 9 2.5G
+K1 L1 L2 L3 L5 L6 .997
+*
+.ENDS trafo21
+*
+**********************************************************
+*
+.SUBCKT TP10283 1 2 3 4 5 6 7
+* 28V+28V; 400VA; 7,285%;115V+115V Toroid do Brasil
+R1 N001 1 1.702
+R2 3 N003 1.702
+L1 N001 2 3.9864084710743801652892561983471
+L2 N003 4 3.9864084710743801652892561983471
+L3 N002 6 .27527
+L4 6 N004 .27527
+R3 N002 5 .1873
+R4 7 N004 .1873
+R5 0 1 1g
+R6 5 0 1g
+R7 7 0 1g
+R8 0 3 1g
+R11 N001 2 7.11765k
+R12 4 N003 7.11765k
+K1 L1 L3 .9995
+K2 L2 L4 .9995
+K3 L1 L4 .9995
+K4 L2 L3 .9995
+K5 L1 L2 .9998
+K6 L3 L4 .9998
+Rleak2 0 2 1000MEG
+Rleak4 0 4 1000MEG
+.ends TP10283
+*
+*************************************************************
+*
+* Trafo 27V + 27V ; 54VA ; reg=26%
+.subckt trafo57 i1a i1b i2a i2b o1 ct o2
+L1 i1a i1b 5.21571572 Rser=42
+L2 i2a i2b 5.21571572 Rser=42
+R2 ct i1b 1meg
+L4 ct o2 0.54536011 Rser=4.1356
+L3 o1 ct 0.54536011 Rser=4.1356
+R1 ct i2a 1meg
+K1 L1 L2 L3 L4 .998
+.backanno
+.ends trafo57
+*
+************************************************************
+*
+***Trafo 30V+30V 10A 600VA 10% soldafria
+*
+.SUBCKT soldafria 1 2 3 4 5 6 7
+*
+R1 1 10 1.2
+R2 3 11 1.2
+L1 2 10 3.6473
+L2 11 4 3.6473
+R3 10 2 7.11765k
+R4 4 11 7.11765k
+L3 6 50 0.335346
+L4 70 6 0.335346
+R5 50 5 .2154
+R6 70 7 .2154
+R7 1 0 1G
+R8 3 0 1G
+R9 2 0 1G
+R10 4 0 1G
+K1 L1 L3 .9995
+K2 L2 L4 .9995
+K3 L1 L4 .9995
+K4 L2 L3 .9995
+K6 L1 L2 .9999
+K5 L3 L4 .9999
+.backanno
+.ends soldafria
+*
+***
+*
+***************************************************
+*Avel
+***************************************Avel
+***Avel 9V+9V 30VA 16% 1,6667A
+*
+.SUBCKT D4001 1 2 3 4 5 6 7
+Rpri1 1 10 12
+Lpri1 2 10 3.6473H
+Rpri2 11 3 12
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 60.5k
+Rnuc2 4 11 60.5k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 .91474
+Rsec2 70 7 .91474
+Lsec1 6 50 0.0346474
+Lsec2 70 6 0.0346474
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4001
+*
+***Avel 12V+12V 60VA 13% 2,5A
+*
+.SUBCKT D4011 1 2 3 4 5 6 7
+Rpri1 1 10 9.361
+Lpri1 2 10 3.6473H
+Rpri2 11 3 9.361
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 26.8889k
+Rnuc2 4 11 26.8889k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 .56988
+Rsec2 70 7 .56988
+Lsec1 6 50 0.0574349
+Lsec2 70 6 0.0574349
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4011
+*
+***Avel D4021 15V+15V 100VA 10% 3,333A
+*
+.SUBCKT D4021 1 2 3 4 5 6 7
+Rpri1 1 10 5.6164
+Lpri1 2 10 3.6473H
+Rpri2 11 3 5.6164
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 20.16667k
+Rnuc2 4 11 20.16667k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 .37069
+Rsec2 70 7 .37069
+Lsec1 6 50 0.083844
+Lsec2 70 6 0.083844
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4021
+*
+***Avel D4030 18V+18V 160VA 4,4444444A 9%
+*
+.SUBCKT D4030 1 2 3 4 5 6 7
+Rpri1 1 10 3.51
+Lpri1 2 10 3.6473H
+Rpri2 11 3 3.51
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 12.1k
+Rnuc2 4 11 12.1k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 0.2864
+Rsec2 70 7 0.2864
+Lsec1 6 50 .1181
+Lsec2 70 6 .1181
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4030
+*
+***Avel D4031 22V+22V 160VA 3,6363..A 9%
+*
+.SUBCKT D4031 1 2 3 4 5 6 7
+Rpri1 1 10 3.51
+Lpri1 2 10 3.6473H
+Rpri2 11 3 3.51
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 12.1k
+Rnuc2 4 11 12.1k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 0.4279
+Rsec2 70 7 0.4279
+Lsec1 6 50 0.176425
+Lsec2 70 6 0.176425
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4031
+*
+***Avel D4050(7,0%) Y236750(6,0%) 25V+25V 330VA
+*
+.subckt D4050 1  2  3  4  5 6 7
+Rpri1 1 10 1.702
+Lpri1 2 10 5.305H
+Rpri2 11 3 1.702
+Lpri2 11 4 5.305H
+Rnuc1 10 2 7.11765k
+Rnuc2 4 11 7.11765k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 0.17896
+Rsec2 70 7 0.17896
+Lsec1 6 50 0.31723124
+Lsec2 70 6 0.31723124
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ends D4050
+*
+***Avel D4051(7,0%) Y236751(6,0%) 30V+30V 330VA
+*
+.SUBCKT D4051 1 2 3 4 5 6 7
+Rpri1 1 10 1.702
+Lpri1 2 10 3.6473H
+Rpri2 11 3 1.702
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 7.11765k
+Rnuc2 4 11 7.11765k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 0.2611
+Rsec2 70 7 0.2611
+Lsec1 6 50 0.3140704
+Lsec2 70 6 0.3140704
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4051
+*
+***Avel D4052 35V+35V 330VA 4,7143A 7%
+*
+.SUBCKT D4052 1 2 3 4 5 6 7
+Rpri1 1 10 1.5972
+Lpri1 2 10 3.6473H
+Rpri2 11 3 1.5972
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 7.11765k
+Rnuc2 4 11 7.11765k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 .36764
+Rsec2 70 7 .36764
+Lsec1 6 50 0.427469
+Lsec2 70 6 0.427469
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4052
+*
+***Avel D4060(6,0%) Y236751(6,0%) 30V+30V 530VA 8,8333A
+*
+.SUBCKT D4060 1 2 3 4 5 6 7
+ Rpri1 1 10 1.5
+Lpri1 2 10 3.6473H
+Rpri2 11 3 1.5
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 4.84k
+Rnuc2 4 11 4.84k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 .08578
+Rsec2 70 7 .08578
+Lsec1 6 50 0.3074758
+Lsec2 70 6 0.3074758
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ends D4060
+*
+***Avel D4061(6,0%) 35V+35V 530VA 7,57143A
+*
+.SUBCKT D4061 1 2 3 4 5 6 7
+ Rpri1 1 10 1.5
+Lpri1 2 10 3.6473H
+Rpri2 11 3 1.5
+Lpri2 11 4 3.6473H
+Rnuc1 10 2 4.84k
+Rnuc2 4 11 4.84k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 .11676
+Rsec2 70 7 .11676
+Lsec1 6 50 0.41850873
+Lsec2 70 6 0.41850873
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ends D4061
+*
+***Avel D4062 40V+40V 530VA 6,625A 6%
+*             P1,P1 P2,P2 S1 CT S2
+*             |  |  |  |  |  |  |
+*
+.SUBCKT D4062 1 2 3 4 5 6 7
+Rpri1 1 10 .86
+Lpri1 2 10 5.305H
+Rpri2 11 3 .86
+Lpri2 11 4 5.305H
+Rnuc1 10 2 4.84k
+Rnuc2 4 11 4.84k
+Rleak1 1 0 1G
+Rleak2 0 3 1G
+Rleak3 2 0 1G
+Rleak4 4 0 1G
+Rsec1 5 50 .23877
+Rsec2 70 7 .23877
+Lsec1 6 50 0.79482
+Lsec2 70 6 0.79482
+Rleak5 6 0 1G
+K1 Lpri1 Lsec1 .9995
+K2 Lpri2 Lsec2 .9995
+K3 Lpri1 Lsec2 .9995
+K4 Lpri2 Lsec1 .9995
+K5 Lpri1 Lpri2 .9998
+K6 Lsec1 lsec2 .9998
+.backanno
+.ENDS D4062
+*
+*************************************************Avel
+*

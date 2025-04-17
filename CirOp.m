@@ -7,6 +7,7 @@ global circuito;
 global namext;
 global CirOpDir;
 global simuladorltspice;
+global simuladorltspiceXVII;
 
 
 
@@ -20,7 +21,8 @@ simulador2019='START /Realtime/wait D:\Synopsys\Hspice_P-2019.06-SP1-1\WIN64\hsp
 simulador2019par='START /Realtime D:\Synopsys\Hspice_P-2019.06-SP1-1\WIN64\hspice.exe -mp 4 -mt 4 -hpp -i ';
 CirOpDir = 'C:\Users\user\Otimizador_v6c';
 simuladorEldo='C:\MentorGraphics\Eldo\AMS_13_2\ixn\bin\eldo.exe -silente -use_proc all ';
-simuladorltspice='LTspice';
+simuladorltspice='START C:\Users\Colombari\AppData\Local\Programs\ADI\LTspice\LTspice.exe';     % configure o PATH na sua maquina 
+simuladorltspiceXVII='XVIIx64'; % configure o PATH na sua maquina 
 
 
 % para LINUX
