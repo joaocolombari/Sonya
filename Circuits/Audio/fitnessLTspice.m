@@ -5,6 +5,7 @@ warning('off', 'all');
 
 global slash;
 global simuladorltspice;
+global simuladorltspiceXVII;
 global circuito;
 global ParDados
 global genesLB;
