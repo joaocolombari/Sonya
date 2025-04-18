@@ -5,35 +5,35 @@
 ***************************************
 
 *RESISTORS
-R1 		0 		N023 	70
-R2 		N021 	V_PP 	150k
-R3 		0 		N010 	220k
-R4 		N008 	V_PP 	22k
-R5 		N003 	V_PP 	22k
-R6 		N009 	N017 	82k
-R7 		V_in 	N017 	10k
-R8 		N010 	N011 	1k
-R9 		0 		N012 	1k
-R14 	N019 	N020 	1k
-R15 	N019 	0 		1Meg
-R16 	N006 	N007 	1k
-R17 	N022 	0 		820
-R18 	N009 	N006 	820
-R28 	V_grid 	N004 	220k
-R29 	N015 	V_grid 	220k
-R32 	N016 	N015 	1k
-R33 	N005 	N004 	1k
+R1 		0 		N023 	{int(X1)*1R}
+R2 		N021 	V_PP 	{int(X2)*1R}
+R3 		0 		N010 	{int(X3)*1R}
+R4 		N008 	V_PP 	{int(X4)*1R}
+R5 		N003 	V_PP 	{int(X5)*1R}
+R6 		N009 	N017 	{int(X6)*1R}
+R7 		V_in 	N017 	{int(X7)*1R}
+R8 		N010 	N011 	{int(X8)*1R}
+R9 		0 		N012 	{int(X9)*1R}
+R14 	N019 	N020 	{int(X10)*1R}
+R15 	N019 	0 		{int(X11)*1R}
+R16 	N006 	N007 	{int(X12)*1R}
+R17 	N022 	0 		{int(X13)*1R}
+R18 	N009 	N006 	{int(X14)*1R}
+R28 	V_grid 	N004 	{int(X15)*1R}
+R29 	N015 	V_grid 	{int(X16)*1R}
+R32 	N016 	N015 	{int(X17)*1R}
+R33 	N005 	N004 	{int(X18)*1R}
 
 
 *LOAD RESISTOR
 Rload 	0 		out 	8
 
 *CAPACITORS
-C1 		N010 	N009 	1µ
-C2 		N017 	N019 	10n
-C3 		N022 	0 		22µ
-C5 		N015 	N008 	1µ
-C6 		N004 	N003 	1µ
+C1 		N010 	N009 	{int(X19)*1u}
+C2 		N017 	N019 	{int(X20)*1n}
+C3 		N022 	0 		{int(X21)*1u}
+C5 		N015 	N008 	{int(X22)*1u}
+C6 		N004 	N003 	{int(X23)*1u}
 
 *BIPOLARS
 Q1 	N013 N021 N023 	0 		BC847C
@@ -60,9 +60,11 @@ V1 V_grid 0 -13
 .OPTIONS plotwinsize=0
 .four 1k 10 V(out)
 .meas tran output_power AVG I(RLoad)*v(out)
+.probe v(out) i(Rload)
 .tran 0 2 1.99 10u
 
 *INCLUDES
+.include ./param.txt
 .model NPN NPN
 .model PNP PNP
 .lib C:\Users\Colombari\Documents\LTspiceXVII\lib\cmp\standard.bjt
