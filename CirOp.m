@@ -14,13 +14,13 @@ global simuladorltspiceXVII;
 namext = '';
 slash = filesep;  % Melhor prática para compatibilidade multiplataforma
 simulador='START /Realtime/wait C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN\hspice.exe ';
-simuladorPar='START /Realtime C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN\hspice.exe ';
-simuladorRF='START /Realtime/wait C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN\hspicerf.exe ';
-simuladorRFpar='START /Realtime C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN\hspicerf.exe ';
-simulador2019='START /Realtime/wait D:\Synopsys\Hspice_P-2019.06-SP1-1\WIN64\hspice.exe ';
-simulador2019par='START /Realtime D:\Synopsys\Hspice_P-2019.06-SP1-1\WIN64\hspice.exe -mp 4 -mt 4 -hpp -i ';
+% simuladorPar='START /Realtime C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN\hspice.exe ';
+% simuladorRF='START /Realtime/wait C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN\hspicerf.exe ';
+% simuladorRFpar='START /Realtime C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN\hspicerf.exe ';
+% simulador2019='START /Realtime/wait D:\Synopsys\Hspice_P-2019.06-SP1-1\WIN64\hspice.exe ';
+% simulador2019par='START /Realtime D:\Synopsys\Hspice_P-2019.06-SP1-1\WIN64\hspice.exe -mp 4 -mt 4 -hpp -i ';
 CirOpDir = 'C:\Users\user\Otimizador_v6c';
-simuladorEldo='C:\MentorGraphics\Eldo\AMS_13_2\ixn\bin\eldo.exe -silente -use_proc all ';
+% simuladorEldo='C:\MentorGraphics\Eldo\AMS_13_2\ixn\bin\eldo.exe -silente -use_proc all ';
 simuladorltspice='START C:\Users\Colombari\AppData\Local\Programs\ADI\LTspice\LTspice.exe';     % configure o PATH na sua maquina 
 simuladorltspiceXVII='START C:\"Program Files"\LTC\LTspiceXVII\XVIIx64.exe'; % configure o PATH na sua maquina 
 

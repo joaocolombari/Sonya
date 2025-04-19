@@ -1,6 +1,6 @@
 ***************************************
-*** GAGABIRO VALVE POWER AMPLIFIER 	***
-***	AUTHOR:  JOAO CARLET			***
+*** GAGABIRO VALVE POWER AMPLIFIER  ***
+***	AUTHOR:  JOAO CARLET            ***
 *** CONTACT: JVCCARLET@USP.BR		***
 ***************************************
 
@@ -30,3 +30,8 @@
 .param      X21 = 22
 .param      X22 = 1
 .param      X23 = 1
+
+*VOLTAGE SOURCES
+.param      X24 = 300
+.param      X25 = -13
+

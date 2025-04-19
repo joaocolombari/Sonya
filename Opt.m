@@ -132,6 +132,10 @@ switch simpr
     case 'LTspice'
         modelsD = 'ModelsLTspice';
         fitness = 'fitnessLTspice';
+
+    case 'LTspiceXVII'
+        modelsD = 'ModelsLTspice';
+        fitness = 'fitnessLTspice';
 end;
 
 eval(['cd ', 'Circuits', slash, family]);
