@@ -1,6 +1,0 @@
-$DATA1 SOURCE='HSPICE' VERSION='P-2019.06-SP1-1 win64' PARAM_COUNT=0
-.TITLE '***amplificador de potencia valvulado'
- maxac            minac            locut            hicut           
- temper           alter#          
-   28.45148396      27.45218617      28.45146096      27.45218617   
-   25.00000000    1               

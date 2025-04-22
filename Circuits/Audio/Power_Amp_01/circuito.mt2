@@ -1,6 +1,0 @@
-$DATA1 SOURCE='HSPICE' VERSION='P-2019.06-SP1-1 win64' PARAM_COUNT=0
-.TITLE '***amplificador de potencia valvulado'
- maxslew          minslew          slew             temper          
- alter#          
-   20.10893456      -0.78226987     6.8181528e+05     25.00000000   
-3               
