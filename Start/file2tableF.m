@@ -17,7 +17,7 @@ function [IM] = file2tableF(n, file, varargin)
     else
       j=0;
       IM=[];
-      for i=1:(nargin-2)
+      for i=1:(nargin-2)                   
 	    values = regexp(words,[varargin{i} '\s*=\s*-?[0-9]*\.?[0-9]*[E|e]?[\+|-]?[0-9]*'],'match');
         if length(values) > 0 
             nomes = regexp(values{1},[varargin{i} '\s*=\s*'],'match');

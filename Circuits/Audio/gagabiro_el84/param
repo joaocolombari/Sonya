@@ -1,0 +1,36 @@
+***************************************
+*** GAGABIRO VALVE POWER AMPLIFIER	***
+***	AUTHOR:  JOAO CARLET			***
+*** CONTACT: JVCCARLET@USP.BR		***
+***************************************
+
+*RESISTORS
+.param      X1 = 402.529
+.param      X2 = 852171
+.param      X3 = 497115
+.param      X4 = 92987.6
+.param      X5 = 91714
+.param      X6 = 85753.1
+.param      X7 = 47361.9
+.param      X8 = 6232.04
+.param      X9 = 8987.73
+.param      X10 = 1613.8
+.param      X11 = 1.92003e+06
+.param      X12 = 2418.46
+.param      X13 = 7310.24
+.param      X14 = 9852.17
+.param      X15 = 12331.9
+.param      X16 = 805252
+.param      X17 = 3241.13
+.param      X18 = 3601.82
+
+*CAPACITORS
+.param      X19 = 88.9004
+.param      X20 = 63.8552
+.param      X21 = 25.5812
+.param      X22 = 0.330582
+.param      X23 = 0.985978
+
+*VOLTAGE SOURCES
+.param      X24 = 234.54
+.param      X25 = -8.4995

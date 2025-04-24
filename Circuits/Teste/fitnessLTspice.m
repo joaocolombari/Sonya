@@ -85,7 +85,9 @@ fprintf('\n');
 ind=1;
 
 % Gera o param
-paramAC(circuito,xr);
+arq = fopen([circuito slash 'param'],'w');
+paramAC(arq,xr);
+fclose(arq);
 
 %% esse aquivo de medida precisa ser substituido pelo .net, o comando tem 
 %  virar aquele um de não abrir a GUI do spice.
@@ -93,9 +95,8 @@ paramAC(circuito,xr);
 %  no LT também, mas eu acho que deva ser igual
 
 % Executa a primeira simulacao 
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit_slew.sp']);
-
-% 1 adicionar rotina de verificacao de simulacao
+[a, b] = system([simuladorltspice circuito slash ...
+'circuito.sp >circuito.lis']);
 
 %% Leitura de saídas - aqui provavelmente vai ter que passar pro log
 

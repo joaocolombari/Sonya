@@ -1,0 +1,48 @@
+***************************************
+*** GAGABIRO VALVE POWER AMPLIFIER  ***
+***	AUTHOR:  JOAO CARLET            ***
+*** CONTACT: JVCCARLET@USP.BR		***
+***************************************
+
+*RESISTORS
+.param      X1 = 70       
+.param      X2 = 150k   
+.param      X3 = 220k
+.param      X4 = 22k      
+.param      X5 = 22k    
+.param      X6 = 82k
+.param      X7 = 10k      
+.param      X8 = 1k     
+.param      X9 = 1k
+.param      X10 = 1k      
+.param      X11 = 1Meg  
+.param      X12 = 1k
+.param      X13 = 820     
+.param      X14 = 820   
+.param      X15 = 220k
+.param      X16 = 220k    
+.param      X17 = 1k    
+.param      X18 = 1k
+
+*CAPACITORS
+.param      X19 = 1
+.param      X20 = 10
+.param      X21 = 22
+.param      X22 = 1
+.param      X23 = 1
+
+*VOLTAGE SOURCES
+.param      X24 = 300
+.param      X25 = -13
+
+
+*COMMANDS
+.tran 0 2 1.99 10u
+.OPTIONS numdgt=7
+.OPTIONS plotwinsize=0
+.four 1k 10 V(out)
+
+.probe v(out) i(Rload)
+
+.meas tran output_power AVG I(RLoad)*v(out)
+

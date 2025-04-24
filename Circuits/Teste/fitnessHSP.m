@@ -5,7 +5,6 @@ warning('off', 'all');
 
 global slash;
 global simuladorltspice;
-global simuladorltspiceXVII;
 global circuito;
 global ParDados
 global genesLB;
@@ -85,19 +84,14 @@ fprintf('\n');
 ind=1;
 
 % Gera o param
-paramAC(circuito,xr);
+arq = fopen([circuito slash 'param'],'w');
+paramAC(arq,xr);
+fclose(arq);
 
-%% esse aquivo de medida precisa ser substituido pelo .net, o comando tem 
-%  virar aquele um de não abrir a GUI do spice.
-%  os valores ele vai olhar dentro do .include. Tem que ver como q faz isso
-%  no LT também, mas eu acho que deva ser igual
 
 % Executa a primeira simulacao 
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit_slew.sp']);
-
-% 1 adicionar rotina de verificacao de simulacao
-
-%% Leitura de saídas - aqui provavelmente vai ter que passar pro log
+[a, b] = system([simuladorltspice circuito slash ...
+'circuito.sp >circuito.lis']);
 
 % Captura resultados
 simsucess=0;
@@ -144,7 +138,7 @@ simsucess=3;
 % slew rate
 slewrate=Meas(3); %V/s
             
-%% avaliacao
+% avaliacao
                 
 % Ganho Maximo
 FGM = scoreAv(abs(Ganho), Gain);                

@@ -6,12 +6,12 @@ function paramAC(circuito, x)
 slash = filesep;
 
 % Limpa arquivos antigos
-if exist([circuito slash 'param'], "file")
-    system(['del "' circuito slash '"param']);
+if exist([circuito slash 'param.txt'], "file")
+    system('del param.txt');
 end
 
 % Abre novo arquivo para escrita
-arq = fopen([circuito slash 'param'],'w');
+arq = fopen([circuito slash 'param.txt'],'w');
 
 % Cabeçalho
 fprintf(arq,['***************************************\n' ...
@@ -34,7 +34,7 @@ end
 
 % VOLTAGE SOURCES
 fprintf(arq,'\n*VOLTAGE SOURCES\n');
-for i = 24:25
+for i = 23:25
     fprintf(arq,'.param      X%d = %g\n', i, x(i));
 end
 

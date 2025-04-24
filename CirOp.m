@@ -22,7 +22,7 @@ simulador='START /Realtime/wait C:\"Program Files"\synopsys\Hspice_A-2008.03\BIN
 CirOpDir = 'C:\Users\user\Otimizador_v6c';
 % simuladorEldo='C:\MentorGraphics\Eldo\AMS_13_2\ixn\bin\eldo.exe -silente -use_proc all ';
 simuladorltspice='START C:\Users\Colombari\AppData\Local\Programs\ADI\LTspice\LTspice.exe';     % configure o PATH na sua maquina 
-simuladorltspiceXVII='START C:\"Program Files"\LTC\LTspiceXVII\XVIIx64.exe'; % configure o PATH na sua maquina 
+simuladorltspiceXVII='START C:\"Program Files"\LTC\LTspiceXVII\XVIIx64.exe -b '; % configure o PATH na sua maquina 
 
 
 % para LINUX
