@@ -64,7 +64,7 @@ V1 V_grid 0 {int(X25)}
 .tran 0 2 1.99 10u
 
 *INCLUDES
-.include ./param.txt
+.include ./param
 .model NPN NPN
 .model PNP PNP
 .lib C:\Users\Colombari\Documents\LTspiceXVII\lib\cmp\standard.bjt
