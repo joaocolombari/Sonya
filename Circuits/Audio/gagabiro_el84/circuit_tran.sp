@@ -59,7 +59,7 @@ V1 V_grid 0 {int(X25)}
 .OPTIONS numdgt=7
 .OPTIONS plotwinsize=0
 .four 1k 10 V(out)
-.meas tran output_power AVG I(RLoad)*v(out)
+.meas tran output_power RMS I(RLoad)*v(out)
 .probe v(out) i(Rload)
 .tran 0 2 1.99 10u
 

@@ -159,33 +159,14 @@ if (~isempty(slew))
 end
 
 % Fourth simulation - tran for GedLee metric
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit_gedlee.sp']);
-if a == 0
-    disp('Simulation command ran successfully.');
-else
-    disp('Simulation command FAILED.');
-    disp(b); % Show error text
-end
-
+ 
 % Build list of variable names dynamically
 varNames = {};   % reset cell array
 
 for i = 0:100
-    varNames{end+1} = ['min' num2str(i)];  % adds 'MIN0', 'MIN1', ..., 'MIN100'
-    varNames{end+1} = ['max' num2str(i)];  % adds 'MAX0', 'MAX1', ..., 'MAX100'
+    varNames{end+1} = ['MIN' num2str(i)];  % adds 'MIN0', 'MIN1', ..., 'MIN100'
+    varNames{end+1} = ['MAX' num2str(i)];  % adds 'MAX0', 'MAX1', ..., 'MAX100'
 end
-
-% captures variables
-gedlee_values = file2table_LTspice(1, 'circuit_gedlee.log', varNames{:});
-
-% Quick check for the log 
-if any(~isnan(gedlee_values))
-    simsuccess = 1;   % Simulation was successful
-else
-    simsuccess = 0;   % Simulation failed
-end
-
-%% Data computing
 
 
 
@@ -193,9 +174,7 @@ end
 Meas = LeMeas1('circuito.ma0', 4);
 if(length(Meas) > 4)
     simsuccess =1;
-end
-
-maxac=Meas(1); minac=Meas(2); locut=Meas(3); hicut=Meas(4); 
+    maxac=Meas(1); minac=Meas(2); locut=Meas(3); hicut=Meas(4); 
     
 % Reposta  
 grave=abs(locut-maxac);
@@ -205,9 +184,7 @@ respfreq=maxac-minac;  % swing na resposta em frequencia (dB)
 % Segundo Tran 0
 Meas = LeMeas1('circuito.mt0', 7);
 if(length(Meas) > 16)
-    simsuccess =2;
-end
-
+simsuccess =2;
 % Tensao 
 maxv=Meas(1); minv=Meas(2);  rmsv=Meas(3);
 % Corrente
@@ -224,6 +201,8 @@ end
 THDcirpeso=sqrt((h2*(2)^2/4)^2+(h3*(3)^2/4)^2+(h4*(4)^2/4)^2... 
 +(h5*(5)^2/4)^2+(h6*(6)^2/4)^2+(h7*(7)^2/4)^2+(h8*(8)^2/4)^2...
 +(h9*9^2/4)^2)/(h1)*100;
+    
+% 
         
 Ganho=20*log10(rmsv/(1.1/sqrt(2)));
 OutPow=rmsv*rmsi;                         
@@ -231,13 +210,12 @@ OutPow=rmsv*rmsi;
 % Segundo Tran 1 (slew)
 Meas = LeMeas1('circuito.mt1', 7);
 if(length(Meas) > 19)
-    simsuccess=3;
-end
+simsuccess=3;
             
 % slew rate
 slewrate=Meas(18); %V/s
             
-%% avaliacao
+% avaliacao
                 
 % Ganho Maximo
 FGM = scoreAv(abs(Ganho), Gain);                

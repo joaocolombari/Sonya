@@ -1,0 +1,42 @@
+Circuit: ***************************************
+
+Warning: Multiple definitions of model "2scr375p" Type: BJT
+Warning: Multiple definitions of model "bc857b" Type: BJT
+Warning: Multiple definitions of model "bc847c" Type: BJT
+Warning: Multiple definitions of model "bc847b" Type: BJT
+Direct Newton iteration for .op point succeeded.
+
+f20hz: v(out)=(-83.1865dB,-136.34°) at 20
+f30hz: v(out)=(-83.1865dB,-136.34°) at 20
+f40hz: v(out)=(-83.1865dB,-136.34°) at 20
+f50hz: v(out)=(-81.9267dB,-161.572°) at 50.05
+f70hz: v(out)=(-81.7916dB,-166.953°) at 70
+f100hz: v(out)=(-81.7178dB,-171.173°) at 100
+f200hz: v(out)=(-81.6634dB,-176.584°) at 200
+f500hz: v(out)=(-81.6442dB,178.536°) at 500
+f700hz: v(out)=(-81.6382dB,176.644°) at 700
+f1000hz: v(out)=(-81.6276dB,174.217°) at 1000
+f2000hz: v(out)=(-81.57dB,167.058°) at 2000
+f2122hz: v(out)=(-81.5606dB,166.221°) at 2122
+f5000hz: v(out)=(-81.2012dB,147.521°) at 5000
+f7000hz: v(out)=(-80.8351dB,135.638°) at 7000
+f10000hz: v(out)=(-80.2007dB,119.671°) at 10000
+f20000hz: v(out)=(-78.2696dB,80.5872°) at 20000
+
+
+Date: Sat Apr 26 15:03:50 2025
+Total elapsed time: 0.084 seconds.
+
+tnom = 27
+temp = 27
+method = trap
+totiter = 30
+traniter = 0
+tranpoints = 0
+accept = 0
+rejected = 0
+matrix size = 67
+fillins = 71
+solver = Normal
+Matrix Compiler1:     530 opcodes
+Matrix Compiler2: 7.29 KB object code size

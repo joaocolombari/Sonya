@@ -9,9 +9,9 @@ ParDados = {
     ['2. Slew Rate (V/us)']                        ['> 10 1'];
     ['3. 20Hz distance from max response (dB)']    ['< 3 2'];
     ['4. 20kHz distance from max response (dB)']   ['> 3 2'];
-    ['5. Output Power (W)']                        ['> 20 3'];
-    ['6. THD (%)']                                 ['< 1 2'];
-    ['7. Max swing in freq response (+- dB)']      ['< 3 1'];
+    ['5. Max swing in freq response (+- dB)']      ['< 3 1'];
+    ['6. Output Power (W)']                        ['> 20 3'];
+    ['7. THD (%)']                                 ['< 1 2'];
     ['8. GedLee Score']                            ['< 3 3']};
 
 VarDados = {

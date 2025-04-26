@@ -75,7 +75,7 @@ V1 V_grid 0 {int(X25)}
 .meas AC f20000hz find v(out) at=20000
 
 *INCLUDES
-.include ./param.txt
+.include ./param
 .model NPN NPN
 .model PNP PNP
 .lib C:\Users\Colombari\Documents\LTspiceXVII\lib\cmp\standard.bjt

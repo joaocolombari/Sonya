@@ -265,7 +265,7 @@ B3 tref 0 V={1*time}
 
 
 *INCLUDES
-.include ./param.txt
+.include ./param
 .model NPN NPN
 .model PNP PNP
 .lib C:\Users\Colombari\Documents\LTspiceXVII\lib\cmp\standard.bjt
