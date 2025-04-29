@@ -1,36 +1,36 @@
 ***************************************
-*** GAGABIRO VALVE POWER AMPLIFIER	***
-***	AUTHOR:  JOAO CARLET			***
-*** CONTACT: JVCCARLET@USP.BR		***
+*** GAGABIRO VALVE POWER AMPLIFIER ***
+*** AUTHOR:  JOAO CARLET            ***
+*** CONTACT: JVCCARLET@USP.BR       ***
 ***************************************
 
-*RESISTORS
-.param      X1 = 955.827
-.param      X2 = 13666.9
-.param      X3 = 986936
-.param      X4 = 89431.1
-.param      X5 = 63592.7
-.param      X6 = 95459
-.param      X7 = 18255.8
-.param      X8 = 1512.77
-.param      X9 = 8665.49
-.param      X10 = 4391.75
-.param      X11 = 55020.6
-.param      X12 = 8622.52
-.param      X13 = 4928.13
-.param      X14 = 3411.08
-.param      X15 = 388451
-.param      X16 = 88363.7
-.param      X17 = 2214.98
-.param      X18 = 1159.71
+* RESISTORS
+.param      X1 = 337.829
+.param      X2 = 318386
+.param      X3 = 549087
+.param      X4 = 35944
+.param      X5 = 39245.4
+.param      X6 = 28234.9
+.param      X7 = 40413
+.param      X8 = 3082.39
+.param      X9 = 4858.24
+.param      X10 = 4886.69
+.param      X11 = 1.316e+06
+.param      X12 = 6388.64
+.param      X13 = 2707.77
+.param      X14 = 5429.63
+.param      X15 = 384408
+.param      X16 = 197173
+.param      X17 = 8120.26
+.param      X18 = 4322.91
 
-*CAPACITORS
-.param      X19 = 37.3299
-.param      X20 = 72.7015
-.param      X21 = 46.702
-.param      X22 = 2.2477
-.param      X23 = 1.19437
+* CAPACITORS
+.param      X19 = 89.9633
+.param      X20 = 61.7446
+.param      X21 = 83.3693
+.param      X22 = 0.517062
+.param      X23 = 5.02434
 
-*VOLTAGE SOURCES
-.param      X24 = 436.561
-.param      X25 = -60.3522
+* VOLTAGE SOURCES
+.param      X24 = 241.09
+.param      X25 = -49.0981

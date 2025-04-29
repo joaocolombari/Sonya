@@ -6,40 +6,40 @@ Warning: Multiple definitions of model "bc847c" Type: BJT
 Warning: Multiple definitions of model "bc847b" Type: BJT
 Direct Newton iteration for .op point succeeded.
 
-gmax: MAX(mag(v(out)))=(-75.8846dB,0°) FROM 0.01 TO 1e+008
-fchi=268230 FROM 0 TO 268230
-fclo=16321.9 FROM 0 TO 16321.9
-f20hz: v(out)=(-83.1865dB,-136.34°) at 20
-f30hz: v(out)=(-83.1865dB,-136.34°) at 20
-f40hz: v(out)=(-83.1865dB,-136.34°) at 20
-f50hz: v(out)=(-81.9267dB,-161.572°) at 50.05
-f70hz: v(out)=(-81.7916dB,-166.953°) at 70
-f100hz: v(out)=(-81.7178dB,-171.173°) at 100
-f200hz: v(out)=(-81.6634dB,-176.584°) at 200
-f500hz: v(out)=(-81.6442dB,178.536°) at 500
-f700hz: v(out)=(-81.6382dB,176.644°) at 700
-f1000hz: v(out)=(-81.6276dB,174.217°) at 1000
-f2000hz: v(out)=(-81.57dB,167.058°) at 2000
-f2122hz: v(out)=(-81.5606dB,166.221°) at 2122
-f5000hz: v(out)=(-81.2012dB,147.521°) at 5000
-f7000hz: v(out)=(-80.8351dB,135.638°) at 7000
-f10000hz: v(out)=(-80.2007dB,119.671°) at 10000
-f20000hz: v(out)=(-78.2696dB,80.5872°) at 20000
+gmax: MAX(mag(v(out)))=(-90.322dB,0°) FROM 0.01 TO 1e+008
+fchi=347138 FROM 0 TO 347138
+fclo=24209.9 FROM 0 TO 24209.9
+f20hz: v(out)=(-152.636dB,102.726°) at 20
+f30hz: v(out)=(-152.636dB,102.726°) at 20
+f40hz: v(out)=(-152.636dB,102.726°) at 20
+f50hz: v(out)=(-144.614dB,95.0071°) at 50.05
+f70hz: v(out)=(-141.695dB,93.5021°) at 70
+f100hz: v(out)=(-138.594dB,92.3339°) at 100
+f200hz: v(out)=(-132.572dB,90.82°) at 200
+f500hz: v(out)=(-124.614dB,89.356°) at 500
+f700hz: v(out)=(-121.693dB,88.7466°) at 700
+f1000hz: v(out)=(-118.597dB,87.9431°) at 1000
+f2000hz: v(out)=(-112.593dB,85.5061°) at 2000
+f2122hz: v(out)=(-112.082dB,85.2174°) at 2122
+f5000hz: v(out)=(-104.748dB,78.5833°) at 5000
+f7000hz: v(out)=(-101.951dB,74.1155°) at 7000
+f10000hz: v(out)=(-99.1096dB,67.6732°) at 10000
+f20000hz: v(out)=(-94.3556dB,49.0075°) at 20000
 
 
-Date: Tue Apr 29 16:25:25 2025
-Total elapsed time: 0.109 seconds.
+Date: Tue Apr 29 19:16:13 2025
+Total elapsed time: 0.110 seconds.
 
 tnom = 27
 temp = 27
 method = trap
-totiter = 30
+totiter = 20
 traniter = 0
 tranpoints = 0
 accept = 0
 rejected = 0
 matrix size = 67
-fillins = 71
+fillins = 73
 solver = Normal
-Matrix Compiler1:     530 opcodes
-Matrix Compiler2: 7.29 KB object code size
+Matrix Compiler1:     534 opcodes
+Matrix Compiler2: 7.33 KB object code size

@@ -1,10 +1,14 @@
+*Score=2.11e+03  Ganho=18dB FGanho=0.1 SlewRate=-1.1e+07V/us FSlewRate=2.1 OutputPower=9.5W FOutputPower=1.6 
+*THD=5.78 FTHD=9.57 PTHD=33.4% FPTHD=30.4 Variacao_em_freq=+-3.2dB FVariacao_em_freq=+-0.068 
+*Variacao_grave=+-3.2dB FVariacao_grave=+-0.14 Variacao_agudo=+-0.0032dB FVariacao_agudo=+-2 
+
 * * * * * * * * * * 
 .include C:\Users\user\Otimizador_v6c\ModelsHSP\Model35
-.Param   X1= 100.529  X2= 13646.857  X3= 14422.748  X4= 140774.435  X5= 29816.824  X6= 927269.703  
-.Param   X7= 5775.747  X8= 4508.856  X9= 672539.892  X10= 100.033  X11= 4.093  X12= 4033.775  X13= 1848.236  
-.Param   X14= 84676.720  X15= 54.599  X16= 58.444  X17= 831.754  X18= -1.062  X19= 468.101  X20= -69.754  
+.Param   X1= 100.525  X2= 13644.282  X3= 14338.291  X4= 154916.417  X5= 20955.089  X6= 903532.740  
+.Param   X7= 5803.252  X8= 4508.856  X9= 648167.391  X10= 100.033  X11= 4.093  X12= 4033.775  X13= 1900.123  
+.Param   X14= 84676.720  X15= 54.590  X16= 58.444  X17= 859.104  X18= -0.439  X19= 468.101  X20= -69.673  
 .Param   X21= 204.269  
-* ( 100.529  13646.857  14422.748  140774.435  29816.824  927269.703  5775.747  4508.856  672539.892  100.033  4.093  4033.775  1848.236  84676.720  54.599  58.444  831.754  -1.062  468.101  -69.754  204.269  )
+* ( 100.525  13644.282  14338.291  154916.417  20955.089  903532.740  5803.252  4508.856  648167.391  100.033  4.093  4033.775  1900.123  84676.720  54.590  58.444  859.104  -0.439  468.101  -69.673  204.269  )
 
 
 V5 in 0 0 AC 1 SIN (0 1.1 1k)
@@ -56,3 +60,13 @@ V5 in 0 PULSE (0 1.1 0 10p 10p 1m 2m)
 .MEASURE TRAN MAXSLEW MAX V(OUT)
 .MEASURE TRAN MINSLEW MIN V(OUT)
 .MEASURE TRAN SLEW DERIV V(OUT) WHEN V(OUT)="(MAXSLEW+MINSLEW)/2"
+
+********************* 23-Jan-2024 17:04:46 ********************************************
+* 1. Gain (dB): 	 > 20 1
+* 2. Slew Rate (V/us): 	 > 10 1
+* 3. 20Hz distance from maximum response (dB): 	 < 3 2
+* 4. 20kHz distance from maximum response (dB): 	 > 3 2
+* 5. Output Power (W): 	 > 20 3
+* 6. THD (%): 	 < 1 2
+* 7. Maximum swing in freq response (+- dB): 	 < 3 1
+* 8. n^2/4 weighted THD (%): 	 < 3 3

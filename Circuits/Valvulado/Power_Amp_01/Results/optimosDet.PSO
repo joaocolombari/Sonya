@@ -1,0 +1,7 @@
+1
+
+*Score=127  Power=1.99e+04uW_1.99e+04uW  (FPower=0) AmpOut=2.9Vpp_2.9Vpp (FAmpOut=0) MedOut=0.99V_0.99V (FMedOut=0.95) 
+Area=9.1um2 (Farea=0) FreqMax=1.35GHz_1.35GHz (FFreqMax=10)  FreqMin=0.998GHz_0.998GHz (FFreqMin=0) CGain=0.088GHz/V_0.088GHz/V (FCGain=0) 
+TCGain=0.15GHz/V_0.15GHz/V (FTCGain=0) PhNoise=-112dBc/Hz_-112dBc/Hz (FPhNoise=0) EH=25%_25% (FEH=1.5) THD=26%_26% (FTHD=2.2) FOM=-160dBc/Hz_-160dBc/Hz (FFOM=3.8)
+( 0.400  30.000  0.300  16.200  18.900  1.400  20.000  )
+

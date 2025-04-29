@@ -80,7 +80,7 @@ fprintf('\n');
 % file2tableLTspice and readFourierTable to take it.
 
 % generates new set of genes into a param file
-paramAC(xr);
+paramAC(circuito,xr);
 
 simsuccess=0;
 
@@ -102,6 +102,9 @@ gain_rms = file2table_LTspice(1, [circuito slash 'circuit_tran.log'], 'gain_rms'
 if (~isempty(output_power) || isempty(fourierTable) || isnan(thd))
     simsuccess = 1;
 end
+
+% Computes gain in db
+gain_db = 20*log10(gain_rms);
 
 % Second simmulation - AC
 [a, b] = system([simuladorltspiceXVII circuito slash 'circuit_ac.sp']);
@@ -126,10 +129,16 @@ AC_values = file2table_LTspice_ac(1, [circuito slash 'circuit_ac.log'], varNames
 fclo = file2table_LTspice(1, [circuito slash 'circuit_ac.log'],'fclo');
 fchi = file2table_LTspice(1, [circuito slash 'circuit_ac.log'],'fchi');
 
+if isempty(fclo), fclo = NaN; end
+if isempty(fchi), fchi = NaN; end
+
 % Quick check for the log
 if ~isempty(AC_values) && all(~isnan(AC_values))
     simsuccess = 2;   % Simulation was successful
 end
+
+% Computes standard deviation of the frequency response
+StdDev = std(AC_values);
 
 % Third simmulation - tran for slew analysis
 [a, b] = system([simuladorltspiceXVII circuito slash 'circuit_slew.sp']);
@@ -147,6 +156,8 @@ slew = file2table_LTspice(1, [circuito slash 'circuit_slew.log'],'slew');
 if (~isempty(slew))
     simsuccess = 3;
 end
+
+slew_rate = abs(slew)*1e6;
 
 % Fourth simulation - tran for GedLee metric
 [a, b] = system([simuladorltspiceXVII circuito slash 'circuit_gedlee.sp']);
@@ -176,7 +187,7 @@ end
 %% --- Post-Simulation Data Processing ---
 
 % 1. Gain Evaluation (dB scale)
-FGA = scoreAv(20 * log10(gain_rms), target_Gain);  % Convert RMS gain to dB before scoring
+FGA = scoreAv(gain_db, target_Gain);  
 
 % 2. Output Power Evaluation
 FOP = scoreAv(output_power, target_Pow);
@@ -185,7 +196,7 @@ FOP = scoreAv(output_power, target_Pow);
 FHD = scoreAv(thd, target_THD);
 
 % 4. Standard Deviation of Frequency Response (AC)
-FSD = scoreAv(std_dev_ac, target_StdDev);
+FSD = scoreAv(StdDev, target_StdDev);
 
 % 5. Low-Frequency Cutoff Point (Hz)
 FLC = scoreAv(fclo, target_Locut);
@@ -194,14 +205,23 @@ FLC = scoreAv(fclo, target_Locut);
 FHC = scoreAv(fchi, target_Hicut);
 
 % 7. Slew Rate (V/µs)
-FSL = scoreAv(abs(slew)*1e6, target_Slew); % Converts to V/us
+FSL = scoreAv(slew_rate, target_Slew); % Converts to V/us
 
 % 8. GedLee Metric (Nonlinear distortion metric)
 FGL = scoreAv(gedlee_values, target_GedLee);
 
+% Ensure all components are valid numbers
+score_parts = [FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL];
+if any(cellfun(@isempty, {FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL})) || any(~isfinite(score_parts))
+    warning('❌ One or more score components is missing or invalid. Assigning infinite score.');
+    sc = inf;
+    sci = inf(1, 8);
+    return;
+end
+
 % --- Final Score Calculation ---
 % A sum-of-squares strategy that heavily penalizes poor performance
-sc = (FGA + FOP + FHD + FSD + FLC + FHC + FSL + FGL)^2;
+sc = (FGA + FOP + FHD + FSD + FLC + FHC + FSL + FGL)^2
 
 % --- Store individual score components ---
 sci = [FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL];
@@ -214,16 +234,28 @@ contsuc = contsuc + 1;
 if Best.score > sc
     Best.score = sc;
 
-    % Save to optimos file
+    % Clean previous results only at the start of optimization
     optimosFile = [circuito slash 'results' slash 'optimos.' modo namext];
+    if cont == 1 && exist(optimosFile, "file")
+        delete(optimosFile);
+    end
+
+    % Append new result
     arq = fopen(optimosFile, 'a+');
-    fprintf(arq, '%d  %.6g\n', cont, sc);
+    fprintf(arq, 'run: %4d\tScore = %.3e\n', cont, sc);
     fclose(arq);
     beep;
 
     % Save current best parameters to paramop
-    paramopFile = [circuito slash 'paramop' namext];
+    % Define the output file path
+    paramopFile = [circuito slash 'results' slash 'paramop_results' namext];
+    % Delete previous version if it exists
+    if exist(paramopFile, "file")
+        delete(paramopFile);
+    end
+    % Open new file for writing
     arq = fopen(paramopFile, 'w');
+    % Write results to the file
     fprintf(arq, ['* Best Solution Summary\n' ...
         '* Score = %.4g\n' ...
         '* Gain = %.2fdB (Score = %.2f)\n' ...
@@ -234,10 +266,12 @@ if Best.score > sc
         '* High Cutoff = %.2f Hz (Score = %.2f)\n' ...
         '* Slew Rate = %.2f V/us (Score = %.2f)\n' ...
         '* GedLee Score = %.2f (Score = %.2f)\n'], ...
-        sc, Gain, FGA, Pow, FOP, THD, FHD, StdDev, FSD, ...
-        Locut, FLC, Hicut, FHC, Slew, FSL, GedLee, FGL);
-    paramOpt(xr); % Write the optimized parameters
+        sc, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
+        fclo, FLC, fchi, FHC, slew_rate, FSL, gedlee_values, FGL);
     fclose(arq);
+
+    % Write the optimized parameters in LTspice param for include
+    paramOpt(circuito, xr, 'paramop'); 
 
     % Save best solution overall (BestT)
     if Best.scoreT > sc
@@ -245,8 +279,15 @@ if Best.score > sc
         Best.parameters = xr;
         xT = x;
 
-        paramopTFile = [circuito slash 'paramopT' namext];
+        % Define output file path
+        paramopTFile = [circuito slash 'results' slash 'paramopT_results' namext];
+        % Delete previous file if it exists
+        if exist(paramopTFile, "file")
+            delete(paramopTFile);
+        end
+        % Open new file for writing
         arq = fopen(paramopTFile, 'w');
+        % Write top solution summary
         fprintf(arq, ['* Top Solution (BestT)\n' ...
             '* Score = %.4g\n' ...
             '* Gain = %.2fdB (Score = %.2f)\n' ...
@@ -257,10 +298,12 @@ if Best.score > sc
             '* High Cutoff = %.2f Hz (Score = %.2f)\n' ...
             '* Slew Rate = %.2f V/us (Score = %.2f)\n' ...
             '* GedLee Score = %.2f (Score = %.2f)\n'], ...
-            sc, Gain, FGA, Pow, FOP, THD, FHD, StdDev, FSD, ...
-            Locut, FLC, Hicut, FHC, Slew, FSL, GedLee, FGL);
-        paramOpt(xr);
+            sc, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
+            fclo, FLC, fchi, FHC, slew_rate, FSL, gedlee_values, FGL);
         fclose(arq);
+
+        % Write the optimized parameters in LTspice param for include
+        paramOpt(circuito, xr, 'paramopT');       
 
         % Save result to memory
         BestRes{modoind} = Best;
@@ -269,9 +312,11 @@ end
                     
 % --- Plot optimization score history and compare current vs best parameters ---
 
-% Save current iteration and score
-scorePlot(1, end+1) = cont;     % Iteration count
-scorePlot(2, end)   = sc;       % Score value
+if size(scorePlot,1) < 2
+    scorePlot = zeros(2,0);  % Initialize as empty 2-row matrix
+end
+
+scorePlot(:, end+1) = [cont; sc];  % Append both values at once
 
 % Create or update figure
 figure(711);
@@ -320,13 +365,13 @@ if simsuccess ~= 4
     end
 
     % Optionally log known metrics if they were partially available
-    if exist('gain_rms', 'var'),      fprintf('Gain (RMS) = %.3g dB\n', 20 * log10(gain_rms)); end
+    if exist('gain_rms', 'var'),      fprintf('Gain (dB) = %.3g dB\n', gain_db); end
     if exist('output_power', 'var'),  fprintf('Output Power = %.3g W\n', output_power); end
     if exist('thd', 'var'),           fprintf('THD = %.4g %%\n', thd); end
-    if exist('std_dev_ac', 'var'),    fprintf('AC Response Std. Dev. = %.3g dB\n', std_dev_ac); end
+    if exist('std_dev_ac', 'var'),    fprintf('AC Response Std. Dev. = %.3g dB\n', StdDev); end
     if exist('fclo', 'var'),          fprintf('Low Cutoff Frequency = %.3g Hz\n', fclo); end
     if exist('fchi', 'var'),          fprintf('High Cutoff Frequency = %.3g Hz\n', fchi); end
-    if exist('slew', 'var'),          fprintf('Slew Rate = %.3g V/us\n', slew * 1e-6); end
+    if exist('slew', 'var'),          fprintf('Slew Rate = %.3g V/us\n', slew_rate); end
     if exist('gedlee_values', 'var') && ~isempty(gedlee_values)
         fprintf('GedLee Metric (max peak-to-peak) = %.3g V\n', max(gedlee_values) - min(gedlee_values));
 end

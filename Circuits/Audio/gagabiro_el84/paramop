@@ -1,0 +1,36 @@
+***************************************
+*** BEST PARAMETERS - GAGABIRO AMP ***
+*** AUTHOR: JOAO VICTOR CARLET     ***
+*** CONTACT: JVCCARLET@USP.BR      ***
+***************************************
+
+*RESISTORS
+.param      X1 = 592.73
+.param      X2 = 844511
+.param      X3 = 605909
+.param      X4 = 32105.8
+.param      X5 = 26356.2
+.param      X6 = 10330.6
+.param      X7 = 39304.8
+.param      X8 = 544.972
+.param      X9 = 6640.39
+.param      X10 = 5883.88
+.param      X11 = 1.78526e+06
+.param      X12 = 8626.07
+.param      X13 = 412.596
+.param      X14 = 7415.15
+.param      X15 = 855756
+.param      X16 = 198231
+.param      X17 = 7891.79
+.param      X18 = 2385.63
+
+*CAPACITORS
+.param      X19 = 74.7516
+.param      X20 = 74.0916
+.param      X21 = 22.3977
+.param      X22 = 0.619379
+.param      X23 = 0.991881
+
+*VOLTAGE SOURCES
+.param      X24 = 358.309
+.param      X25 = -55.4331

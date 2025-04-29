@@ -3,10 +3,7 @@
 * * * * * * * * * * 
 **OPTIONS 
 
-.options NOMOD NOTOP numdgt=10 statfl=1  
-+ NXX Noelck=1 MEASFILE=1 NOTOP RUNLVL=1 
-+dcon=1 ingold=1 Measdgt=8 post=2
-
+.options NOMOD NOTOP numdgt=10 statfl=1 NXX Noelck=1 MEASFILE=1 NOTOP RUNLVL=1 dcon=1 ingold=1 Measdgt=8 *post=2
 * Nomod (supress model output) NOPAGE (suppress page eject) numdgt (numero de digitos)
 * Noelck bypass element checking *NOTOP supress element check *dcon desability auto conver
 * ingold notacao cientifica *Measfile todos os dados num unico arquivo
@@ -102,11 +99,11 @@ R6 N005 N001 R6
 R7 N007 N001 R7
 R8 N012 N006 R8
 R9 N018 N012 R9
-R10 N023 N024 R10
-R11 N023 0 R11
+R10 in N024 R10
+R11 in 0 R11
 R12 0 N017 R12
 R13 N015 N009 R13
-R14 0 OUT R14
+Rout 0 OUT R14
 R15 N020 N004 R15
 R16 N026 N027 R16
 R17 N027 OUT R17
@@ -177,7 +174,7 @@ XU6 N022 N018 0 N016 EL34X
 .param V3 = 'nint(X20)*1V'
 .param V4 = 'nint(X21)*1V'
 
-.include param.txt
+.include param
 
 * * * * * * * * * * 
 
