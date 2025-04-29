@@ -57,6 +57,11 @@ V1 V_grid 0 {int(X25)}
 *COMMANDS
 .ac dec 100 0.01 100meg
 .probe v(out)
+
+.meas gmax max(mag(V(out)))
+.meas AC fchi FROM 0 TARG mag(V(out))=gmax/sqrt(2) FALL=1
+.meas AC fclo FROM 0 TARG mag(V(out))=gmax/sqrt(2) RISE=1
+
 .meas AC f20hz find v(out) at=20
 .meas AC f30hz find v(out) at=20
 .meas AC f40hz find v(out) at=20

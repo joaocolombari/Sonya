@@ -5,14 +5,14 @@ global NameMenu;
 global mudamenu;
 
 ParDados = {
-    ['1. Gain (dB)']                               ['> 20 1'];
-    ['2. Slew Rate (V/us)']                        ['> 10 1'];
-    ['3. 20Hz distance from max response (dB)']    ['< 3 2'];
-    ['4. 20kHz distance from max response (dB)']   ['> 3 2'];
-    ['5. Max swing in freq response (+- dB)']      ['< 3 1'];
-    ['6. Output Power (W)']                        ['> 20 3'];
-    ['7. THD (%)']                                 ['< 1 2'];
-    ['8. GedLee Score']                            ['< 3 3']};
+    ['1. Output Power (W)']                        ['> 20 1'];
+    ['2. Gain (dB)']                               ['> 10 1'];
+    ['3. THD (%)']                                 ['< 10 2'];
+    ['4. Std deviation of freq response (dB)']     ['< 1.5 2'];
+    ['5. Lower Cuttof (Hz)']                       ['< 20 2'];
+    ['6. Higher Cuttof (Hz)']                      ['> 20000 2'];
+    ['7. Slew Rate (V/us)']                        ['< 10 1'];
+    ['8. GedLee Score']                            ['< 3 4']};
 
 VarDados = {
     ['R1 (ohms)']     ['10']    ['1000']     ['70']         ['0'];  % X1
