@@ -1,4 +1,4 @@
-function [sc, sci] = fitnessLTspice(x)
+function [sc, sci] = fitnessLTspice_old(x)
 %---------------------------------------------------%
 % Fitness function for the GAGABIRO power amplifier %
 % Viva Joao Bosco e Aldir Blanc!!                   %
@@ -385,4 +385,3 @@ end
 fprintf('\n\n');
 
 end
-

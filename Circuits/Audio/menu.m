@@ -5,7 +5,7 @@ global NameMenu;
 global mudamenu;
 
 ParDados = {
-    ['1. Output Power (W)']                        ['> 20 1'];
+    ['1. Output Power (W)']                        ['> 20 4'];
     ['2. Gain (dB)']                               ['> 10 1'];
     ['3. THD (%)']                                 ['< 10 2'];
     ['4. Std deviation of freq response (dB)']     ['< 1.5 2'];
