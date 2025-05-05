@@ -3,35 +3,35 @@
 *** AUTHOR: JOAO VICTOR CARLET     ***
 *** CONTACT: JVCCARLET@USP.BR      ***
 ***************************************
-*** Run #1 | Score = 1.9e+23 ***
+*** Run #1824 | Score = 0.002938 ***
 
 *RESISTORS
-.param      X1 = 70
-.param      X2 = 150000
-.param      X3 = 220000
-.param      X4 = 22000
-.param      X5 = 22000
-.param      X6 = 82000
-.param      X7 = 10000
-.param      X8 = 1000
-.param      X9 = 1000
-.param      X10 = 1000
-.param      X11 = 1e+06
-.param      X12 = 1000
-.param      X13 = 820
-.param      X14 = 820
-.param      X15 = 220000
-.param      X16 = 220000
-.param      X17 = 1000
-.param      X18 = 1000
+.param      X1 = 618.924
+.param      X2 = 314985
+.param      X3 = 260756
+.param      X4 = 58259.5
+.param      X5 = 71358.3
+.param      X6 = 98164.9
+.param      X7 = 1583.97
+.param      X8 = 9528.94
+.param      X9 = 8086.65
+.param      X10 = 9668.86
+.param      X11 = 886333
+.param      X12 = 6305.59
+.param      X13 = 1410.54
+.param      X14 = 4847
+.param      X15 = 837941
+.param      X16 = 999845
+.param      X17 = 7871.07
+.param      X18 = 3257.45
 
 *CAPACITORS
-.param      X19 = 1
-.param      X20 = 10
-.param      X21 = 22
-.param      X22 = 1
-.param      X23 = 1
+.param      X19 = 18.8012
+.param      X20 = 86.6823
+.param      X21 = 50.6186
+.param      X22 = 5.37096
+.param      X23 = 7.72834
 
 *VOLTAGE SOURCES
-.param      X24 = 300
-.param      X25 = -13
+.param      X24 = 497.612
+.param      X25 = -19.2188

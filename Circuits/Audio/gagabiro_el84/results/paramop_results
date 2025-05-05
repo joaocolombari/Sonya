@@ -1,12 +1,12 @@
 * Best Solution Summary
 
-* Score = 1.9e+23
-* Gain = 29.47dB (Score = 0.00)
-* Output Power = 13.51W (Score = 1.30)
-* THD = 0.6366% (Score = 0.00)
-* Std Dev (Freq Response) = 0.27 dB (Score = 0.00)
-* Low Cutoff = 9.04 Hz (Score = 0.00)
-* High Cutoff = 48388.10 Hz (Score = 0.00)
-* Slew Rate = 4359420000000.00 V/us (Score = 435941999999.00)
-* GedLee Score = 5.82 (Score = 3.76)
+* Score = 0.002938
+* Gain = 31.13dB (Score = 0.00)
+* Output Power = 19.73W (Score = 0.05)
+* THD = 1.8514% (Score = 0.00)
+* Std Dev (Freq Response) = 0.19 dB (Score = 0.00)
+* Low Cutoff = 2.82 Hz (Score = 0.00)
+* High Cutoff = 44447.60 Hz (Score = 0.00)
+* Slew Rate = 4.49 V/us (Score = 0.00)
+* GedLee Score = 2.59 (Score = 0.00)
 

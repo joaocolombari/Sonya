@@ -81,7 +81,7 @@ slew = file2table_LTspice(1, [circuito slash 'circuit_slew.log'], 'slew');
 if ~isempty(slew)
     simsuccess = 3;
 end
-slew_rate = abs(slew) * 1e-6;
+slew_rate = abs(slew) * 1e6;
 
 % === TRAN: GedLee ===
 [a, b] = system([simuladorltspiceXVII circuito slash 'circuit_gedlee.sp']);
@@ -171,7 +171,7 @@ if Best.score > sc
 
         % Save paramopT summary
         arq = fopen(paramopTFile, 'w');
-        fprintf(arq, ['* Top Solution (BestT) Summary\n\n' ...
+        fprintf(arq, ['* Top Solution (BestT)\n' ...
             '* Score = %.4g\n' ...
             '* Gain = %.2fdB (Score = %.2f)\n' ...
             '* Output Power = %.2fW (Score = %.2f)\n' ...
@@ -180,18 +180,18 @@ if Best.score > sc
             '* Low Cutoff = %.2f Hz (Score = %.2f)\n' ...
             '* High Cutoff = %.2f Hz (Score = %.2f)\n' ...
             '* Slew Rate = %.2f V/us (Score = %.2f)\n' ...
-            '* GedLee Score = %.2f (Score = %.2f)\n\n'], ...
+            '* GedLee Score = %.2f (Score = %.2f)\n'], ...
             sc, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
-            fclo, FLC, fchi, FHC, slew_rate, FSL, gm, FGL);
+            fclo, FLC, fchi, FHC, slew_rate, FSL, gedlee_values, FGL);
         fclose(arq);
 
-        paramOpt(circuito, xr, 'paramopT', sc, cont);
 
+        paramOpt(circuito, xr, 'paramopT', sc, cont);
         BestRes{modoind} = Best;
     end
 end
 
-% === Plotting === 
+% === Plotting ===
 if size(scorePlot,1) < 2
     scorePlot = zeros(2,0);
 end

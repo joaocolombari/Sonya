@@ -5,32 +5,32 @@
 ***************************************
 
 * RESISTORS
-.param      X1 = 725.306
-.param      X2 = 342957
-.param      X3 = 685974
-.param      X4 = 73627.5
-.param      X5 = 25203.3
-.param      X6 = 83301.1
-.param      X7 = 17209.6
-.param      X8 = 479.808
-.param      X9 = 5699.81
-.param      X10 = 5033.93
-.param      X11 = 1.86145e+06
-.param      X12 = 9864.15
-.param      X13 = 1080.24
-.param      X14 = 4102.88
-.param      X15 = 616915
-.param      X16 = 138651
-.param      X17 = 5434.35
-.param      X18 = 8479.39
+.param      X1 = 614.232
+.param      X2 = 164101
+.param      X3 = 58635.7
+.param      X4 = 79058.1
+.param      X5 = 72126.5
+.param      X6 = 76831.3
+.param      X7 = 1659.06
+.param      X8 = 9493.73
+.param      X9 = 3265.23
+.param      X10 = 9657.13
+.param      X11 = 890824
+.param      X12 = 5136.28
+.param      X13 = 1746.88
+.param      X14 = 2915.17
+.param      X15 = 834319
+.param      X16 = 951692
+.param      X17 = 8088.34
+.param      X18 = 4825.33
 
 * CAPACITORS
-.param      X19 = 92.976
-.param      X20 = 78.1891
-.param      X21 = 87.8002
-.param      X22 = 3.80743
-.param      X23 = 4.47072
+.param      X19 = 0.46887
+.param      X20 = 82.6484
+.param      X21 = 42.0053
+.param      X22 = 7.8837
+.param      X23 = 6.936
 
 * VOLTAGE SOURCES
-.param      X24 = 480.114
-.param      X25 = -42.4587
+.param      X24 = 498.995
+.param      X25 = -18.5123
