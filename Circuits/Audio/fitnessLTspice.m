@@ -49,48 +49,51 @@ end
 fprintf('\n');
 
 % === Simulation Setup ===
-paramAC(circuito, xr);
 simsuccess = 0;
 
 % === TRAN: Power & THD ===
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit_tran.sp']);
-output_power = file2table_LTspice(1, [circuito slash 'circuit_tran.log'], 'output_power');
-gain_rms     = file2table_LTspice(1, [circuito slash 'circuit_tran.log'], 'gain_rms');
-[~, thd]     = readFourierTable([circuito slash 'circuit_tran.log']);
+paramAC(circuito, xr, 'tran');
+[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
+output_power = file2table_LTspice(1, [circuito slash 'circuit.log'], 'output_power');
+gain_rms     = file2table_LTspice(1, [circuito slash 'circuit.log'], 'gain_rms');
+[~, thd]     = readFourierTable([circuito slash 'circuit.log']);
 if ~isempty(output_power) && ~isempty(gain_rms) && ~isnan(thd)
     simsuccess = 1;
 end
 gain_db = 20 * log10(gain_rms);
 
 % === AC Sweep ===
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit_ac.sp']);
+paramAC(circuito, xr, 'ac');
+[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
 varNames = {'f20hz','f30hz','f40hz','f50hz','f70hz','f100hz', ...
             'f200hz','f500hz','f700hz','f1000hz','f2000hz','f2122hz', ...
             'f5000hz','f7000hz','f10000hz','f20000hz'};
-AC_values = file2table_LTspice_ac(1, [circuito slash 'circuit_ac.log'], varNames{:});
-fclo = file2table_LTspice(1, [circuito slash 'circuit_ac.log'], 'fclo'); if isempty(fclo), fclo = NaN; end
-fchi = file2table_LTspice(1, [circuito slash 'circuit_ac.log'], 'fchi'); if isempty(fchi), fchi = NaN; end
+AC_values = file2table_LTspice_ac(1, [circuito slash 'circuit.log'], varNames{:});
+fclo = file2table_LTspice(1, [circuito slash 'circuit.log'], 'fclo'); if isempty(fclo), fclo = NaN; end
+fchi = file2table_LTspice(1, [circuito slash 'circuit.log'], 'fchi'); if isempty(fchi), fchi = NaN; end
 if ~isempty(AC_values) && all(~isnan(AC_values))
     simsuccess = 2;
 end
 StdDev = std(AC_values);
 
 % === TRAN: Slew Rate ===
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit_slew.sp']);
-slew = file2table_LTspice(1, [circuito slash 'circuit_slew.log'], 'slew');
+paramAC(circuito, xr, 'slew');
+[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
+slew = file2table_LTspice(1, [circuito slash 'circuit.log'], 'slew');
 if ~isempty(slew)
     simsuccess = 3;
 end
 slew_rate = abs(slew) * 1e-6;
 
 % === TRAN: GedLee ===
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit_gedlee.sp']);
+paramAC(circuito, xr, 'gedlee');
+[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
 varNames = {}; 
 for i = 0:100; 
     varNames{end+1} = ['min' num2str(i)]; 
     varNames{end+1} = ['max' num2str(i)]; 
 end
-gedlee_values = file2table_LTspice(1, [circuito slash 'circuit_gedlee.log'], varNames{:});
+gedlee_values = file2table_LTspice(1, [circuito slash 'circuit.log'], varNames{:});
 gm = gedlee_from_meas(gedlee_values(1:2:end), gedlee_values(2:2:end));
 if any(~isnan(gedlee_values))
     simsuccess = 4;
@@ -106,6 +109,7 @@ FHC = scoreAv(fchi,       target_Hicut);
 FSL = scoreAv(slew_rate,  target_Slew);
 FGL = scoreAv(gm,         target_GedLee);
 
+result_parts = [gain_db, output_power, thd, StdDev, fclo, fchi, slew_rate, gm];
 score_parts = [FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL];
 if any(~isfinite(score_parts))
     warning('❌ Invalid score component. Assigning Inf.');
@@ -150,12 +154,15 @@ if Best.score > sc
         '* Low Cutoff = %.2f Hz (Score = %.2f)\n' ...
         '* High Cutoff = %.2f Hz (Score = %.2f)\n' ...
         '* Slew Rate = %.2f V/us (Score = %.2f)\n' ...
-        '* GedLee Score = %.2f (Score = %.2f)\n\n'], ...
+        '* GedLee = %.2f (Score = %.2f)\n\n'], ...
         sc, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
         fclo, FLC, fchi, FHC, slew_rate, FSL, gm, FGL);
+    fprintf(arq, '\n* Best Solution Vector:\n');
+    fprintf(arq, '%g ', xr);
+    fprintf(arq, '\n');
     fclose(arq);
 
-    paramOpt(circuito, xr, 'paramop', sc, cont);  % Save param file
+    paramOpt(circuito, xr, 'paramop', sc, cont, result_parts, score_parts); % Save param file
 
     % Save best of all time
     if Best.scoreT > sc
@@ -183,29 +190,34 @@ if Best.score > sc
             '* GedLee Score = %.2f (Score = %.2f)\n\n'], ...
             sc, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
             fclo, FLC, fchi, FHC, slew_rate, FSL, gm, FGL);
+        fprintf(arq, '\n* Best Solution Vector:\n');
+        fprintf(arq, '%g ', xr);
+        fprintf(arq, '\n');
         fclose(arq);
 
-        paramOpt(circuito, xr, 'paramopT', sc, cont);
+        paramOpt(circuito, xr, 'paramopT', sc, cont, result_parts, score_parts);
 
         BestRes{modoind} = Best;
     end
 end
 
 % === Plotting === 
-if size(scorePlot,1) < 2
-    scorePlot = zeros(2,0);
+if sc == Best.scoreT
+    if size(scorePlot,1) < 2
+        scorePlot = zeros(2,0);
+    end
+    scorePlot(:, end+1) = [cont; sc];
+    
+    figure(711);
+    set(711, 'Name', [circuito ': Iteration=' num2str(contopt, '%.1f') ...
+                      ', Best Score=' num2str(Best.scoreT, '%1.3g')], ...
+        'NumberTitle', 'off', 'MenuBar', 'none');
+    subplot(2,1,1); semilogy(scorePlot(1,:), scorePlot(2,:), '.'); title('Score Evolution');
+    xlabel('Iteration'); ylabel('Score');
+    subplot(2,1,2); bar([x; xT]', 'grouped');
+    legend('Current', 'Best'); title(['Parameter Comparison | Score = ' num2str(sc,'%1.3g')]);
+    pause(0.2);
 end
-scorePlot(:, end+1) = [cont; sc];
-
-figure(711);
-set(711, 'Name', [circuito ': Iteration=' num2str(contopt, '%.1f') ...
-                  ', Best Score=' num2str(Best.scoreT, '%1.3g')], ...
-    'NumberTitle', 'off', 'MenuBar', 'none');
-subplot(2,1,1); semilogy(scorePlot(1,:), scorePlot(2,:), '.'); title('Score Evolution');
-xlabel('Iteration'); ylabel('Score');
-subplot(2,1,2); bar([x; xT]', 'grouped');
-legend('Current', 'Best'); title(['Parameter Comparison | Score = ' num2str(sc,'%1.3g')]);
-pause(0.2);
 
 % === Failure case ===
 if simsuccess ~= 4

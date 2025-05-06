@@ -5,32 +5,60 @@
 ***************************************
 
 * RESISTORS
-.param      X1 = 614.232
-.param      X2 = 164101
-.param      X3 = 58635.7
-.param      X4 = 79058.1
-.param      X5 = 72126.5
-.param      X6 = 76831.3
-.param      X7 = 1659.06
-.param      X8 = 9493.73
-.param      X9 = 3265.23
-.param      X10 = 9657.13
-.param      X11 = 890824
-.param      X12 = 5136.28
-.param      X13 = 1746.88
-.param      X14 = 2915.17
-.param      X15 = 834319
-.param      X16 = 951692
-.param      X17 = 8088.34
-.param      X18 = 4825.33
+.param      X1 = 278.676
+.param      X2 = 432494
+.param      X3 = 612269
+.param      X4 = 39163.6
+.param      X5 = 83610.2
+.param      X6 = 70488.2
+.param      X7 = 15241.6
+.param      X8 = 8845.5
+.param      X9 = 1254.01
+.param      X10 = 7587.81
+.param      X11 = 1.60387e+06
+.param      X12 = 5998.93
+.param      X13 = 5336.88
+.param      X14 = 4420.26
+.param      X15 = 306755
+.param      X16 = 635064
+.param      X17 = 9854.5
+.param      X18 = 6430.46
 
 * CAPACITORS
-.param      X19 = 0.46887
-.param      X20 = 82.6484
-.param      X21 = 42.0053
-.param      X22 = 7.8837
-.param      X23 = 6.936
+.param      X19 = 48.519
+.param      X20 = 5.10897
+.param      X21 = 91.2441
+.param      X22 = 3.6065
+.param      X23 = 9.03599
 
 * VOLTAGE SOURCES
-.param      X24 = 498.995
-.param      X25 = -18.5123
+.param      X24 = 464.622
+.param      X25 = -49.2068
+
+* SOURCES
+V4 V_PP 0 {int(X24)}
+V5 V_in 0 SINE(0 0.447 1k) AC 1
+V1 V_grid 0 {int(X25)}
+
+* COMMANDS
+.ac dec 100 0.01 100meg
+.probe v(out)
+.meas gmax max(mag(V(out)))
+.meas AC fchi FROM 0 TARG mag(V(out))=gmax/sqrt(2) FALL=1
+.meas AC fclo FROM 0 TARG mag(V(out))=gmax/sqrt(2) RISE=1
+.meas AC f20hz find v(out) at=20
+.meas AC f30hz find v(out) at=30
+.meas AC f40hz find v(out) at=40
+.meas AC f50hz find v(out) at=50.05
+.meas AC f70hz find v(out) at=70
+.meas AC f100hz find v(out) at=100
+.meas AC f200hz find v(out) at=200
+.meas AC f500hz find v(out) at=500
+.meas AC f700hz find v(out) at=700
+.meas AC f1000hz find v(out) at=1000
+.meas AC f2000hz find v(out) at=2000
+.meas AC f2122hz find v(out) at=2122
+.meas AC f5000hz find v(out) at=5000
+.meas AC f7000hz find v(out) at=7000
+.meas AC f10000hz find v(out) at=10000
+.meas AC f20000hz find v(out) at=20000
