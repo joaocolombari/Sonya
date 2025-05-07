@@ -112,17 +112,19 @@ FGL = scoreAv(gm,         target_GedLee);
 result_parts = [gain_db, output_power, thd, StdDev, fclo, fchi, slew_rate, gm];
 score_parts = [FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL];
 
-% === Failure case ===
-if simsuccess ~= 4
-    sc = inf; sci = inf(1,8);
-    fprintf('\n❌ Simulation Error (step = %d). Score = %.3g\n', simsuccess, sc);
-elseif any(~isfinite(score_parts))
-    fprintf('❌ Invalid score component. Assigning Inf.\n');
-    sc = inf; sci = inf(1,8);
+if any(~isfinite(score_parts))
+    fprintf('❌ Invalid score component. Assigning Inf.');
+    sc = inf; sci = inf(1, 8); return;
 else
     sc  = (sum(score_parts))^2;
     sci = score_parts;
     contsuc = contsuc + 1;
+end
+
+% === Failure case ===
+if simsuccess ~= 4
+    sc = inf; sci = inf(1,8);
+    fprintf('\n❌ Simulation Error (step = %d). Score = %.3g\n', simsuccess, sc);
 end
 
 % === Best Score Logging ===

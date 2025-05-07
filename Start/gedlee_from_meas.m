@@ -11,8 +11,11 @@ function gm = gedlee_from_meas(minValues, maxValues)
 % Author: João Victor Colombari Carlet
 % Contact: jvccarlet@usp.br
 
-    if length(minValues) ~= length(maxValues)
-        error('minValues and maxValues must have the same length.');
+    % === Check for empty or invalid inputs ===
+    if isempty(minValues) || isempty(maxValues) || length(minValues) ~= length(maxValues)
+        warning('Invalid or empty input values for GedLee. Assigning inf.');
+        gm = inf;
+        return;
     end
 
     % Flip min values to align waveform
