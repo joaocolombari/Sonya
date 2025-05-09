@@ -6,26 +6,40 @@ Warning: Multiple definitions of model "bc847c" Type: BJT
 Warning: Multiple definitions of model "bc847b" Type: BJT
 Direct Newton iteration for .op point succeeded.
 
-maxslew: MAX(v(out))=1.39496 FROM 0 TO 0.01
-minslew: MIN(v(out))=-0.983536 FROM 0 TO 0.01
-slew: D(v(out))=-261105 at 4.27694e-006
+gmax: MAX(mag(v(out)))=(-72.3147dB,0°) FROM 0.01 TO 1e+008
+fchi=302558 FROM 0 TO 302558
+fclo=12843 FROM 0 TO 12843
+f20hz: v(out)=(-76.8212dB,-168.289°) at 20
+f30hz: v(out)=(-76.7723dB,-172.274°) at 30
+f40hz: v(out)=(-76.7551dB,-174.307°) at 40
+f50hz: v(out)=(-76.7471dB,-175.557°) at 50.05
+f70hz: v(out)=(-76.7401dB,-177.028°) at 70
+f100hz: v(out)=(-76.7363dB,-178.227°) at 100
+f200hz: v(out)=(-76.7333dB,179.982°) at 200
+f500hz: v(out)=(-76.73dB,177.461°) at 500
+f700hz: v(out)=(-76.727dB,176.12°) at 700
+f1000hz: v(out)=(-76.7207dB,174.213°) at 1000
+f2000hz: v(out)=(-76.6846dB,168.103°) at 2000
+f2122hz: v(out)=(-76.6786dB,167.37°) at 2122
+f5000hz: v(out)=(-76.4468dB,150.584°) at 5000
+f7000hz: v(out)=(-76.2037dB,139.627°) at 7000
+f10000hz: v(out)=(-75.7664dB,124.535°) at 10000
+f20000hz: v(out)=(-74.3207dB,85.9249°) at 20000
 
 
-Date: Fri May 09 16:37:44 2025
-Total elapsed time: 1.082 seconds.
+Date: Fri May 09 16:43:04 2025
+Total elapsed time: 0.125 seconds.
 
 tnom = 27
 temp = 27
-method = modified trap
-totiter = 28761
-traniter = 28748
-tranpoints = 12785
-accept = 12201
-rejected = 584
+method = trap
+totiter = 14
+traniter = 0
+tranpoints = 0
+accept = 0
+rejected = 0
 matrix size = 67
-fillins = 94
+fillins = 63
 solver = Normal
-Thread vector: 29.8/14.7[2] 4.2/3.2[2] 3.8/2.7[2] 0.7/0.7[2]  2592/500
-Matrix Compiler1: 13.05 KB object code size  3.2/1.7/[1.4]
-Matrix Compiler2: 7.84 KB object code size  1.0/1.3/[0.9]
-
+Matrix Compiler1:     498 opcodes
+Matrix Compiler2: 7.15 KB object code size

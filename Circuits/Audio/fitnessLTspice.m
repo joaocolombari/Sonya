@@ -69,7 +69,7 @@ output_power = file2table_LTspice(1, [circuito slash 'circuit.log'], 'output_pow
 gain_rms     = file2table_LTspice(1, [circuito slash 'circuit.log'], 'gain_rms');
 [~, thd]     = readFourierTable([circuito slash 'circuit.log']);
 if ~isempty(output_power) && ~isempty(gain_rms) && ~isnan(thd)
-    simsuccess = 1;
+    simsuccess = simsuccess + 1;
 end
 gain_db = 20 * log10(gain_rms);
 
@@ -91,7 +91,7 @@ AC_values = file2table_LTspice_ac(1, [circuito slash 'circuit.log'], varNames{:}
 fclo = file2table_LTspice(1, [circuito slash 'circuit.log'], 'fclo'); if isempty(fclo), fclo = NaN; end
 fchi = file2table_LTspice(1, [circuito slash 'circuit.log'], 'fchi'); if isempty(fchi), fchi = NaN; end
 if ~isempty(AC_values) && all(~isnan(AC_values))
-    simsuccess = 2;
+    simsuccess = simsuccess + 1;
 end
 StdDev = std(AC_values);
 
@@ -107,7 +107,7 @@ if ~success
 end
 slew = file2table_LTspice(1, [circuito slash 'circuit.log'], 'slew');
 if ~isempty(slew)
-    simsuccess = 3;
+    simsuccess = simsuccess + 1;
 end
 slew_rate = abs(slew) * 1e-6;
 
@@ -129,7 +129,7 @@ for i = 0:100;
 end
 gedlee_values = file2table_LTspice(1, [circuito slash 'circuit.log'], varNames{:});
 if any(~isnan(gedlee_values))
-    simsuccess = 4;
+    simsuccess = simsuccess + 1;
 end
 gm = gedlee_from_meas(gedlee_values(1:2:end), gedlee_values(2:2:end));
 
