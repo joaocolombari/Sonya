@@ -12,14 +12,15 @@ global slash simuladorltspiceXVII circuito ParDados genesLB Best BestRes ...
        scorePlot xT modoind modo dif snap cont contsuc namext contopt;
 
 % === Target limits ===
-target_Pow    = ParDados{1, 2};
-target_Gain   = ParDados{2, 2}; 
-target_THD    = ParDados{3, 2}; 
-target_StdDev = ParDados{4, 2};
-target_Locut  = ParDados{5, 2}; 
-target_Hicut  = ParDados{6, 2}; 
-target_Slew   = ParDados{7, 2}; 
-target_GedLee = ParDados{8, 2}; 
+target_Vaa    = ParDados{1, 2};
+target_Pow    = ParDados{2, 2};
+target_Gain   = ParDados{3, 2}; 
+target_THD    = ParDados{4, 2}; 
+target_StdDev = ParDados{5, 2};
+target_Locut  = ParDados{6, 2}; 
+target_Hicut  = ParDados{7, 2}; 
+target_Slew   = ParDados{8, 2}; 
+target_GedLee = ParDados{9, 2}; 
 
 % === Denormalization ===
 j = 1;
@@ -51,9 +52,19 @@ fprintf('\n');
 % === Simulation Setup ===
 simsuccess = 0;
 
+% === Power Supply Voltage ===
+vaa = xr(24);
+
 % === TRAN: Power & THD ===
 paramAC(circuito, xr, 'tran');
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
+success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+if ~success
+    paramAC(circuito, xr, 'tran', 0.01);
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        simsuccess = 0;
+    end
+end
 output_power = file2table_LTspice(1, [circuito slash 'circuit.log'], 'output_power');
 gain_rms     = file2table_LTspice(1, [circuito slash 'circuit.log'], 'gain_rms');
 [~, thd]     = readFourierTable([circuito slash 'circuit.log']);
@@ -62,9 +73,17 @@ if ~isempty(output_power) && ~isempty(gain_rms) && ~isnan(thd)
 end
 gain_db = 20 * log10(gain_rms);
 
+
 % === AC Sweep ===
 paramAC(circuito, xr, 'ac');
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
+success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+if ~success
+    paramAC(circuito, xr, 'ac', 0.01);
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        simsuccess = 0;
+    end
+end
 varNames = {'f20hz','f30hz','f40hz','f50hz','f70hz','f100hz', ...
             'f200hz','f500hz','f700hz','f1000hz','f2000hz','f2122hz', ...
             'f5000hz','f7000hz','f10000hz','f20000hz'};
@@ -78,16 +97,31 @@ StdDev = std(AC_values);
 
 % === TRAN: Slew Rate ===
 paramAC(circuito, xr, 'slew');
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
+success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+if ~success
+    paramAC(circuito, xr, 'slew', 0.01);
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        simsuccess = 0;
+    end
+end
 slew = file2table_LTspice(1, [circuito slash 'circuit.log'], 'slew');
 if ~isempty(slew)
     simsuccess = 3;
 end
 slew_rate = abs(slew) * 1e-6;
 
+
 % === TRAN: GedLee ===
 paramAC(circuito, xr, 'gedlee');
-[a, b] = system([simuladorltspiceXVII circuito slash 'circuit.sp']);
+success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+if ~success
+    paramAC(circuito, xr, 'gedlee', 0.01);
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        simsuccess = 0;
+    end
+end
 varNames = {}; 
 for i = 0:100; 
     varNames{end+1} = ['min' num2str(i)]; 
@@ -100,17 +134,18 @@ end
 gm = gedlee_from_meas(gedlee_values(1:2:end), gedlee_values(2:2:end));
 
 % === Score Computation ===
-FGA = scoreAv(gain_db,    target_Gain);  
+FVA = scoreAv(vaa,          target_Vaa);
+FGA = scoreAv(gain_db,      target_Gain);  
 FOP = scoreAv(output_power, target_Pow);
-FHD = scoreAv(thd,        target_THD);
-FSD = scoreAv(StdDev,     target_StdDev);
-FLC = scoreAv(fclo,       target_Locut);
-FHC = scoreAv(fchi,       target_Hicut);
-FSL = scoreAv(slew_rate,  target_Slew);
-FGL = scoreAv(gm,         target_GedLee);
+FHD = scoreAv(thd,          target_THD);
+FSD = scoreAv(StdDev,       target_StdDev);
+FLC = scoreAv(fclo,         target_Locut);
+FHC = scoreAv(fchi,         target_Hicut);
+FSL = scoreAv(slew_rate,    target_Slew);
+FGL = scoreAv(gm,           target_GedLee);
 
-result_parts = [gain_db, output_power, thd, StdDev, fclo, fchi, slew_rate, gm];
-score_parts = [FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL];
+result_parts = [vaa, gain_db, output_power, thd, StdDev, fclo, fchi, slew_rate, gm];
+score_parts = [FVA, FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL];
 
 % === Failure case ===
 if simsuccess ~= 4
@@ -152,6 +187,7 @@ if Best.score > sc
     arq = fopen(paramopFile, 'w');
     fprintf(arq, ['* Best Solution Summary\n\n' ...
         '* Score = %.4g\n' ...
+        '* Vaa = %.2fV (Score = %.2f)\n' ...
         '* Gain = %.2fdB (Score = %.2f)\n' ...
         '* Output Power = %.2fW (Score = %.2f)\n' ...
         '* THD = %.4f%% (Score = %.2f)\n' ...
@@ -160,7 +196,7 @@ if Best.score > sc
         '* High Cutoff = %.2f Hz (Score = %.2f)\n' ...
         '* Slew Rate = %.2f V/us (Score = %.2f)\n' ...
         '* GedLee = %.2f (Score = %.2f)\n\n'], ...
-        sc, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
+        sc, vaa, FVA, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
         fclo, FLC, fchi, FHC, slew_rate, FSL, gm, FGL);
     fprintf(arq, '\n* Best Solution Vector:\n');
     fprintf(arq, '%g ', xr);
@@ -185,6 +221,7 @@ if Best.score > sc
         arq = fopen(paramopTFile, 'w');
         fprintf(arq, ['* Top Solution (BestT) Summary\n\n' ...
             '* Score = %.4g\n' ...
+            '* Vaa = %.2fV (Score = %.2f)\n' ...
             '* Gain = %.2fdB (Score = %.2f)\n' ...
             '* Output Power = %.2fW (Score = %.2f)\n' ...
             '* THD = %.4f%% (Score = %.2f)\n' ...
@@ -192,8 +229,8 @@ if Best.score > sc
             '* Low Cutoff = %.2f Hz (Score = %.2f)\n' ...
             '* High Cutoff = %.2f Hz (Score = %.2f)\n' ...
             '* Slew Rate = %.2f V/us (Score = %.2f)\n' ...
-            '* GedLee Score = %.2f (Score = %.2f)\n\n'], ...
-            sc, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
+            '* GedLee = %.2f (Score = %.2f)\n\n'], ...
+            sc, vaa, FVA, gain_db, FGA, output_power, FOP, thd, FHD, StdDev, FSD, ...
             fclo, FLC, fchi, FHC, slew_rate, FSL, gm, FGL);
         fprintf(arq, '\n* Best Solution Vector:\n');
         fprintf(arq, '%g ', xr);

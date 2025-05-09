@@ -5,14 +5,15 @@ global NameMenu;
 global mudamenu;
 
 ParDados = {
-    ['1. Output Power (W)']                        ['> 20 4'];
-    ['2. Gain (dB)']                               ['> 10 1'];
-    ['3. THD (%)']                                 ['< 10 2'];
-    ['4. Std deviation of freq response (dB)']     ['< 1.5 2'];
-    ['5. Lower Cuttof (Hz)']                       ['< 20 2'];
-    ['6. Higher Cuttof (Hz)']                      ['> 20000 2'];
-    ['7. Slew Rate (V/us)']                        ['< 10 1'];
-    ['8. GedLee Score']                            ['< 3 4']};
+    ['1. Plate Voltage (V)']                       ['< 300 1 2'];
+    ['2. Output Power (W)']                        ['> 20 4'];
+    ['3. Gain (dB)']                               ['> 10 1'];
+    ['4. THD (%)']                                 ['< 10 2'];
+    ['5. Std deviation of freq response (dB)']     ['< 1.5 2'];
+    ['6. Lower Cuttof (Hz)']                       ['< 20 2'];
+    ['7. Higher Cuttof (Hz)']                      ['> 20000 2'];
+    ['8. Slew Rate (V/us)']                        ['> 10 1'];
+    ['9. GedLee Score']                            ['< 3 4']};
 
 VarDados = {
     ['R1 (ohms)']     ['10']    ['1000']     ['70']         ['0'];  % X1

@@ -1,15 +1,16 @@
 * Top Solution (BestT) Summary
 
-* Score = 9.656
-* Gain = 24.60dB (Score = 0.00)
-* Output Power = 4.46W (Score = 3.11)
-* THD = 5.4132% (Score = 0.00)
-* Std Dev (Freq Response) = 0.17 dB (Score = 0.00)
-* Low Cutoff = 1.68 Hz (Score = 0.00)
-* High Cutoff = 48182.40 Hz (Score = 0.00)
-* Slew Rate = 2.25 V/us (Score = 0.00)
-* GedLee Score = 2.60 (Score = 0.00)
+* Score = 43.95
+* Vaa = 300.00V (Score = 1.00)
+* Gain = 29.47dB (Score = 0.00)
+* Output Power = 13.51W (Score = 1.30)
+* THD = 0.6362% (Score = 0.00)
+* Std Dev (Freq Response) = 0.21 dB (Score = 0.00)
+* Low Cutoff = 9.04 Hz (Score = 0.00)
+* High Cutoff = 48388.10 Hz (Score = 0.00)
+* Slew Rate = 4.39 V/us (Score = 0.56)
+* GedLee = 5.83 (Score = 3.77)
 
 
 * Best Solution Vector:
-122.665 529632 651651 57712.1 90507.1 40095.4 17179.1 3162.52 4858.43 2489.14 1.84361e+06 7290.46 3182.7 9562.74 564452 817700 8024.54 5625.72 75.7362 54.4389 22.4677 4.88604 8.36663 270.94 -11.994 
+70 150000 220000 22000 22000 82000 10000 1000 1000 1000 1e+06 1000 820 820 220000 220000 1000 1000 1 10 22 1 1 300 -13 
