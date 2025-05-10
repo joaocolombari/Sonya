@@ -5,16 +5,16 @@
 ***************************************
 
 *** Best Solution Summary	***
-*** Run #3076 | Score = 14.66 ***
+*** Run #1 | Score = 33.03 ***
 
 * Gain = 293.73dB (Score = 0.98)
 * Output Power = 27.78W (Score = 0.00)
-* THD = 9.0729% (Score = 2.19)
+* THD = 9.0731% (Score = 2.19)
 * Std Dev (Freq Response) = 2.45 dB (Score = 0.00)
 * Low Cutoff = 0.17 Hz (Score = 0.00)
-* High Cutoff = 6.04 Hz (Score = 0.00)
+* High Cutoff = 6.05 Hz (Score = 0.00)
 * Slew Rate = 50087.10 V/us (Score = 0.00)
-* GedLee Score = 3.35 (Score = 0.66)
+* GedLee Score = 3.39 (Score = 0.66)
 
 
 * RESISTORS
@@ -38,7 +38,7 @@
 .param      X18 = 4918.32
 
 * CAPACITORS
-.param      X19 = 8.58453
+.param      X19 = 4.7
 .param      X20 = 9.03927
 .param      X21 = 41.6056
 .param      X22 = 3.73999
