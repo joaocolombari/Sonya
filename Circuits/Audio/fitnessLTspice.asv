@@ -60,15 +60,16 @@ paramAC(circuito, xr, 'tran');
 success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
 if ~success
     paramAC(circuito, xr, 'tran', 0.01);
-    runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20); 
-    % if doesnt work again, log will be empty and meas fails, thus no 
-    % further check is necessary 
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        step_success(1) = false;
+    end
 end
 output_power = file2table_LTspice(1, [circuito slash 'circuit.log'], 'output_power');
 gain_rms     = file2table_LTspice(1, [circuito slash 'circuit.log'], 'gain_rms');
 [~, thd]     = readFourierTable([circuito slash 'circuit.log']);
 if ~isempty(output_power) && ~isempty(gain_rms) && ~isnan(thd)
-   step_success(1) = true;
+    simsuccess = 1;
 end
 gain_db = 20 * log10(gain_rms);
 
@@ -78,7 +79,10 @@ paramAC(circuito, xr, 'ac');
 success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
 if ~success
     paramAC(circuito, xr, 'ac', 0.01);
-    runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        simsuccess = 0;
+    end
 end
 varNames = {'f20hz','f30hz','f40hz','f50hz','f70hz','f100hz', ...
             'f200hz','f500hz','f700hz','f1000hz','f2000hz','f2122hz', ...
@@ -87,7 +91,7 @@ AC_values = file2table_LTspice_ac(1, [circuito slash 'circuit.log'], varNames{:}
 fclo = file2table_LTspice(1, [circuito slash 'circuit.log'], 'fclo'); if isempty(fclo), fclo = NaN; end
 fchi = file2table_LTspice(1, [circuito slash 'circuit.log'], 'fchi'); if isempty(fchi), fchi = NaN; end
 if ~isempty(AC_values) && all(~isnan(AC_values))
-    step_success(2) = true;
+    simsuccess = 2;
 end
 StdDev = std(AC_values);
 
@@ -96,11 +100,14 @@ paramAC(circuito, xr, 'slew');
 success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
 if ~success
     paramAC(circuito, xr, 'slew', 0.01);
-    runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        simsuccess = 0;
+    end
 end
 slew = file2table_LTspice(1, [circuito slash 'circuit.log'], 'slew');
 if ~isempty(slew)
-    step_success(3) = true;
+    simsuccess = 3;
 end
 slew_rate = abs(slew) * 1e-6;
 
@@ -110,7 +117,10 @@ paramAC(circuito, xr, 'gedlee');
 success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
 if ~success
     paramAC(circuito, xr, 'gedlee', 0.01);
-    runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    success = runsSafe(simuladorltspiceXVII, [circuito slash 'circuit.sp'], 20);
+    if ~success
+        simsuccess = 0;
+    end
 end
 varNames = {}; 
 for i = 0:100; 
@@ -119,7 +129,7 @@ for i = 0:100;
 end
 gedlee_values = file2table_LTspice(1, [circuito slash 'circuit.log'], varNames{:});
 if any(~isnan(gedlee_values))
-    step_success(4) = true;
+    simsuccess = 4;
 end
 gm = gedlee_from_meas(gedlee_values(1:2:end), gedlee_values(2:2:end));
 
@@ -138,10 +148,13 @@ result_parts = [vaa, gain_db, output_power, thd, StdDev, fclo, fchi, slew_rate, 
 score_parts = [FVA, FGA, FOP, FHD, FSD, FLC, FHC, FSL, FGL];
 
 % === Failure case ===
-if ~all(step_success)
+if simsuccess ~= 4
     sc = inf; sci = inf(1,9);
-    failed_steps = find(~step_success);
-    fprintf('\n❌ Simulation failed at step(s): %s. Score = %.3g\n', num2str(failed_steps), sc);
+    if simsuccess == 0
+        fprintf('\n❌ Simulation failed: generated parameter set is not feasible.\n');
+    else
+        fprintf('\n❌ Simulation error (occurred at step %d). Score = %.3g\n', simsuccess - 1, sc);
+    end
 elseif any(~isfinite(score_parts))
     fprintf('❌ Invalid score component detected. Assigning Inf.\n');
     sc = inf; sci = inf(1,9);

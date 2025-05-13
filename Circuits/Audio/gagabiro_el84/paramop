@@ -5,48 +5,48 @@
 ***************************************
 
 *** Best Solution Summary	***
-*** Run #1 | Score = 33.03 ***
+*** Run #948 | Score = 9.13 ***
 
-* Gain = 293.73dB (Score = 0.98)
-* Output Power = 27.78W (Score = 0.00)
-* THD = 9.0731% (Score = 2.19)
-* Std Dev (Freq Response) = 2.45 dB (Score = 0.00)
-* Low Cutoff = 0.17 Hz (Score = 0.00)
-* High Cutoff = 6.05 Hz (Score = 0.00)
-* Slew Rate = 50087.10 V/us (Score = 0.00)
-* GedLee Score = 3.39 (Score = 0.66)
+* Gain = 344.55dB (Score = 1.30)
+* Output Power = 30.16W (Score = 0.00)
+* THD = 15.6923% (Score = 0.86)
+* Std Dev (Freq Response) = 1.52 dB (Score = 0.00)
+* Low Cutoff = 0.22 Hz (Score = 0.00)
+* High Cutoff = 4.69 Hz (Score = 0.00)
+* Slew Rate = 50622.60 V/us (Score = 0.00)
+* GedLee Score = 4.78 (Score = 0.52)
 
 
 * RESISTORS
-.param      X1 = 712.299
-.param      X2 = 117235
-.param      X3 = 193854
-.param      X4 = 83023.8
-.param      X5 = 50167
-.param      X6 = 91468.6
-.param      X7 = 5127.1
-.param      X8 = 5279.78
-.param      X9 = 3136.48
-.param      X10 = 4516.55
-.param      X11 = 1.83318e+06
-.param      X12 = 6171.71
-.param      X13 = 5929.15
-.param      X14 = 8104.59
-.param      X15 = 419915
-.param      X16 = 86796.4
-.param      X17 = 529.494
-.param      X18 = 4918.32
+.param      X1 = 432.321
+.param      X2 = 48694.8
+.param      X3 = 22748.7
+.param      X4 = 53121.6
+.param      X5 = 55685.4
+.param      X6 = 16741.2
+.param      X7 = 1104.38
+.param      X8 = 9466.73
+.param      X9 = 105.126
+.param      X10 = 7476.02
+.param      X11 = 975322
+.param      X12 = 1752.47
+.param      X13 = 195.705
+.param      X14 = 2480.52
+.param      X15 = 596976
+.param      X16 = 689537
+.param      X17 = 3733.23
+.param      X18 = 929.021
 
 * CAPACITORS
-.param      X19 = 4.7
-.param      X20 = 9.03927
-.param      X21 = 41.6056
-.param      X22 = 3.73999
-.param      X23 = 2.74987
+.param      X19 = 2.08557
+.param      X20 = 62.7432
+.param      X21 = 1.2956
+.param      X22 = 3.26381
+.param      X23 = 4.67852
 
 * VOLTAGE SOURCES
-.param      X24 = 293.732
-.param      X25 = -9.35396
+.param      X24 = 344.548
+.param      X25 = -12.9379
 
 *** TRAN SIMULATION SETUP
 * SOURCES
