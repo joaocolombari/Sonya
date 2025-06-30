@@ -196,6 +196,13 @@ if Best.score > sc
 
     paramOpt(circuito, xr, 'paramop', sc, cont, result_parts, sci); % Save param file
 
+    % === Rounded Param File (E-series) ===
+    xr_rounded = roundToEseries(xr, ...
+        'res_idx', 1:18, 'res_series', 'e24', ...
+        'cap_idx', 19:23, 'cap_series', 'e12');
+    
+    paramOpt(circuito, xr_rounded, 'paramop_rounded');
+
     % Save best of all time
     if Best.scoreT > sc
         Best.scoreT = sc;
@@ -229,6 +236,14 @@ if Best.score > sc
         fclose(arq);
 
         paramOpt(circuito, xr, 'paramopT', sc, cont, result_parts, score_parts);
+
+
+        % === Rounded Param File (E-series) ===
+        xr_rounded = roundToEseries(xr, ...
+            'res_idx', 1:18, 'res_series', 'e24', ...
+            'cap_idx', 19:23, 'cap_series', 'e12');
+        
+        paramOpt(circuito, xr_rounded, 'paramopT_rounded');
 
         BestRes{modoind} = Best;
     end
