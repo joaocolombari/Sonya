@@ -33,8 +33,8 @@ function gm = gedlee_from_meas(minValues, maxValues)
     refInput = 0.45;
     [~, idx] = min(abs(input - refInput));
     gain = Values(idx) / refInput;
-    if gain == 0
-        warning('Gain is zero — invalid transfer curve.');
+    if gain == 0 || ~isfinite(gain)
+        warning('Gain is zero or invalid — invalid transfer curve.');
         gm = inf;
         return;
     end
@@ -43,18 +43,19 @@ function gm = gedlee_from_meas(minValues, maxValues)
     Values = Values / gain;
 
     % --- GedLee computation ---
-    T = @(x) interp1(input, Values, x, 'spline', 'extrap'); % interpolator
+    % Create dense and smooth interpolation
+    x_dense = linspace(-1, 1, 1000);
+    y = interp1(input, Values, x_dense, 'spline', 'extrap');
 
-    % Numerical derivatives via finite differences
-    dT  = @(x) gradient(T(x), x);
-    d2T = @(x) gradient(dT(x), x);
+    % Compute first and second derivatives numerically
+    dy  = gradient(y, x_dense);
+    d2y = gradient(dy, x_dense);
 
-    % Define integrand
-    integrand = @(x) cos(x * pi / 2).^2 .* (d2T(x)).^2;
+    % Define integrand and compute GedLee integral
+    integrand = cos(x_dense * pi / 2).^2 .* (d2y).^2;
 
-    % Compute integral numerically from -1 to 1
     try
-        gm = sqrt(integral(integrand, -1, 1));
+        gm = sqrt(trapz(x_dense, integrand));
     catch
         gm = inf;
         warning('GedLee integral failed. Assigning inf.');
