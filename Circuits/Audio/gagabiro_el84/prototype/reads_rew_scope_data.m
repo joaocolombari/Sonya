@@ -1,6 +1,6 @@
 % === READ REW SCOPE FILE AND PLOT (with voltage scaling) ===
 
-filename = 'rew_scope_data.txt';  % Replace with your actual file path
+filename = 'test_1/gedlee.txt';  % Replace with your actual file path
 fid = fopen(filename, 'r');
 if fid == -1
     error('Could not open file.');
@@ -44,7 +44,7 @@ fclose(fid);
 % Convert raw amplitude to real voltage
 voltage = raw_amplitude / scale_factor;
 
-% === Apply input attenuation compensation: +23.2068 dB ===
+% === Apply input attenuation compensation: +18.83 dB ===
 gain_dB = 18.83;
 gain = 10^(gain_dB / 20);  
 voltage = voltage * gain;
