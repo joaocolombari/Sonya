@@ -4,37 +4,39 @@
 *** CONTACT: JVCCARLET@USP.BR       ***
 ***************************************
 
+
 * RESISTORS
 .param      X1 = 560
-.param      X2 = 150000
-.param      X3 = 270000
-.param      X4 = 82000
-.param      X5 = 39000
-.param      X6 = 82000
-.param      X7 = 1200
-.param      X8 = 5600
-.param      X9 = 4700
-.param      X10 = 3900
-.param      X11 = 1.8e+06
-.param      X12 = 6800
-.param      X13 = 4700
-.param      X14 = 6800
-.param      X15 = 470000
-.param      X16 = 68000
-.param      X17 = 220
-.param      X18 = 5600
+.param      X2 = 27000
+.param      X3 = 430000
+.param      X4 = 51000
+.param      X5 = 56000
+.param      X6 = 91000
+.param      X7 = 8200
+.param      X8 = 1800
+.param      X9 = 6800
+.param      X10 = 10000
+.param      X11 = 1.5e+06
+.param      X12 = 5600
+.param      X13 = 6200
+.param      X14 = 7500
+.param      X15 = 360000
+.param      X16 = 560000
+.param      X17 = 560
+.param      X18 = 5100
 
 * CAPACITORS
-.param      X19 = 4.7
-.param      X20 = 220
-.param      X21 = 47
-.param      X22 = 3.9
-.param      X23 = 2.7
+.param      X19 = 2.7
+.param      X20 = 18
+.param      X21 = 270
+.param      X22 = 2.7
+.param      X23 = 3.9
 
 * VOLTAGE SOURCES
-.param      X24 = 356.398
-.param      X25 = -10.6183
+.param      X24 = 289.575
+.param      X25 = -9.53892
 
+*** GEDLEE SIMULATION SETUP
 * SOURCES
 V2 V_PP 0 {int(X24)}
 V6 V_grid 0 {int(X25)}
@@ -46,7 +48,6 @@ B3 tref 0 V={1*time}
 * error tolerance
 .option reltol=0.001
 .tran 0 0.202 0 10u
-.probe v(out)
 .MEAS TRAN MIN0 MIN V(out) FROM=0m TO=2m
 .MEAS TRAN MAX0 MAX V(out) FROM=0m TO=2m
 .MEAS TRAN MIN1 MIN V(out) FROM=2m TO=4m
