@@ -1,6 +1,6 @@
 % === READ REW SCOPE FILE AND PLOT (with voltage scaling) ===
 
-filename = 'rew_scope_data.txt';  % Replace with your actual file path
+filename = 'test_1/test.txt';  % Replace with your actual file path
 fid = fopen(filename, 'r');
 if fid == -1
     error('Could not open file.');
