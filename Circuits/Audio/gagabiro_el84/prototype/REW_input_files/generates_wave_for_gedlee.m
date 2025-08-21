@@ -25,7 +25,7 @@ signal = signal(1:total_samples);
 
 
 % Normalize signal to 99% of full-scale peak (based on 1.1883 Vrms)
-V_rms_fullscale = 1.1883;
+V_rms_fullscale = 1.234;
 V_peak_fullscale = V_rms_fullscale * sqrt(2);
 signal = signal / (max(abs(signal)) * V_peak_fullscale);
 
