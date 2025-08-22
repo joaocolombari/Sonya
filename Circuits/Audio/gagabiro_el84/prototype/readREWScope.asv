@@ -1,0 +1,173 @@
+function data = readREWScope(filename, varargin)
+%READREWSCOPE Reads and processes REW Scope exported data
+%
+%   data = readREWScope(filename, 'trim_mode', mode, 'sweep_ms', 202, 'f0_hz', 1000)
+%
+%   trim_mode:
+%     'none'  (default)
+%     'zero'  -> first zero crossing
+%     'peak'  -> first maximum then first zero after it
+%     'valley'-> NEW: start at deepest envelope minimum (between sweeps),
+%                       then first zero-crossing after that
+%
+%   Optional:
+%     'window_ms' - length to keep (ms). If omitted, keeps tail from start.
+%     'sweep_ms'  - cap length to exactly one sweep (e.g., 202 ms).
+%     'f0_hz'     - nominal tone (default 1000) only used to size the
+%                   smoothing window for 'valley' (not critical).
+
+    % Defaults
+    window_ms = [];
+    trim_mode = 'none';
+    sweep_ms  = [];
+    f0_hz     = 1000;   % only used to shape the envelope window
+
+    % Parse optional arguments (simple loop)
+    for k = 1:2:length(varargin)
+        switch lower(varargin{k})
+            case 'window_ms'
+                window_ms = varargin{k+1};
+            case 'trim_mode'
+                trim_mode = lower(varargin{k+1});
+            case 'sweep_ms'
+                sweep_ms = varargin{k+1};
+            case 'f0_hz'
+                f0_hz = varargin{k+1};
+        end
+    end
+
+    % Open file
+    fid = fopen(filename, 'r');
+    if fid == -1
+        error('Could not open file: %s', filename);
+    end
+
+    % Init
+    time = [];
+    raw_amp = [];
+    scale_factor = 1.0;
+    data_section = false;
+
+    % Read line by line
+    while ~feof(fid)
+        line = fgetl(fid);
+
+        % Capture the scaling factor from metadata
+        if contains(line, 'CH1 one volt')
+            tokens = regexp(line, 'CH1 one volt\s*:\s*([\d\.Ee+-]+)', 'tokens');
+            if ~isempty(tokens)
+                scale_factor = str2double(tokens{1}{1});
+            end
+        end
+
+        % Look for header (start of data)
+        if contains(line, 'Time CH1')
+            data_section = true;
+            continue
+        end
+
+        % Read numerical data
+        if data_section
+            nums = sscanf(line, '%f %f');
+            if length(nums) == 2
+                time(end+1) = nums(1); %#ok<AGROW>
+                raw_amp(end+1) = nums(2); %#ok<AGROW>
+            end
+        end
+    end
+    fclose(fid);
+
+    % Convert raw amplitude to real voltage
+    voltage = raw_amp / scale_factor;
+
+    % Estimate sampling rate
+    if length(time) > 1
+        fs = 1 / mean(diff(time));
+    else
+        fs = NaN;
+    end
+
+    % ---- Determine start index (includes 'valley' mode) ----
+    start_idx = 1;
+
+    switch trim_mode
+        case 'zero'
+            zc = find(voltage(1:end-1).*voltage(2:end) <= 0, 1, 'first');
+            if ~isempty(zc), start_idx = zc + 1; end
+
+        case 'peak'
+            [~, peak_idx] = max(voltage);
+            zc = find(voltage(peak_idx:end-1).*voltage(peak_idx+1:end) <= 0, 1, 'first');
+            start_idx = ifelse(~isempty(zc), peak_idx + zc, peak_idx);
+
+        case 'valley'
+            x = voltage(:);
+            if isfinite(fs) && fs>0 && isfinite(f0_hz) && f0_hz>0
+                w = max(5, round(3*fs/f0_hz));   % ~3 cycles smoothing
+            else
+                w = max(5, round(0.005*fs));
+                if ~isfinite(w) || w < 5, w = 31; end
+            end
+        
+            % Energy envelope
+            xx = x.^2; csum = cumsum([0; xx]);
+            sse = csum(1+w:end) - csum(1:end-w);
+            env = sse / w;
+            padL = floor(w/2); padR = ceil(w/2)-1;
+            env  = [repmat(env(1), padL, 1); env; repmat(env(end), padR, 1)];
+        
+            % Valley index
+            guard = max(1, round(0.01*numel(env)));
+            [~, imin] = min(env(guard:end-guard));
+            imin = imin + guard - 1;
+        
+            % --- NEW: require amplitude above small fraction of max ---
+            thrAmp = 0.05*max(abs(x));  % 5% of max
+            seg = x(imin:end);
+            zc = find(seg(1:end-1).*seg(2:end) <= 0 & ...
+                      abs(seg(2:end)) > thrAmp, 1, 'first');
+        
+            if ~isempty(zc)
+                start_idx = imin + zc;
+            else
+                start_idx = imin;
+            end
+
+        otherwise
+            start_idx = 1;
+    end
+
+    % ---- Decide how many samples to keep from start_idx ----
+    if isfinite(fs) && fs > 0
+        if ~isempty(window_ms)
+            keepN = round(fs * window_ms / 1000);
+        else
+            keepN = numel(voltage) - start_idx + 1; % full tail
+        end
+        if ~isempty(sweep_ms)
+            keepN = min(keepN, round(fs * sweep_ms / 1000));
+        end
+    else
+        if ~isempty(window_ms)
+            keepN = min(numel(voltage) - start_idx + 1, round(window_ms)); % crude fallback
+        else
+            keepN = numel(voltage) - start_idx + 1;
+        end
+    end
+
+    end_idx = min(start_idx + keepN - 1, length(voltage));
+
+    % Slice and re-zero time
+    voltage = voltage(start_idx:end_idx);
+    t0 = time(start_idx);
+    time = time(start_idx:end_idx) - t0;
+
+    % Return struct
+    data.time = time(:);
+    data.voltage = voltage(:);
+    data.fs = fs;
+end
+
+function y = ifelse(c,a,b)
+    if c, y = a; else, y = b; end
+end
