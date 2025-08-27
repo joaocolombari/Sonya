@@ -22,12 +22,12 @@ zero_volt = 0.*t;
 one_sweep = [zero_volt one_sweep];
 t = [t t];
 
-% Repeat to fill exactly 20 seconds
+% Repeat to fill exactly 40 seconds
 n_repeats = floor(20 / t_one_sweep);  % Number of full repetitions
 signal = repmat(one_sweep, 1, n_repeats);
 
-% Ensure exact 20 s duration (trim any excess samples)
-total_samples = min(length(signal), fs * 20);
+% Ensure exact 40 s duration (trim any excess samples)
+total_samples = min(length(signal), fs * 40);
 signal = signal(1:total_samples);
 
 
@@ -40,7 +40,7 @@ signal = signal / (max(abs(signal)) * V_peak_fullscale);
 audiowrite('gedlee_sweep_20s_float32.wav', signal', fs, 'BitsPerSample', 32);
 disp('File "gedlee_sweep_20s_float32.wav" successfully generated.');
 
-% Plot the first sweep cycle (404 ms)
+% Plot the first sweep cycle (20 ms)
 figure;
 plot((0:length(t)-1)/fs * 1000, one_sweep);
 xlabel('Time (ms)');
