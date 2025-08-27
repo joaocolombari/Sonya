@@ -1,0 +1,12 @@
+* Evaluation of measured results in directory: test_unnoptimized
+
+* Score = 71.1
+* Vaa = 300.00V (Score = 1.00)
+* Gain = 24.65dB (Score = 0.00)
+* Output Power = 4.86W (Score = 3.03)
+* THD = 0.8454% (Score = 0.00)
+* Std Dev (Freq Response) = 0.76 dB (Score = 0.00)
+* Low Cutoff = 11.00 Hz (Score = 0.00)
+* High Cutoff = 23278.65 Hz (Score = 0.00)
+* Slew Rate = 0.50 V/us (Score = 0.95)
+* GedLee = 5.59 (Score = 3.45)

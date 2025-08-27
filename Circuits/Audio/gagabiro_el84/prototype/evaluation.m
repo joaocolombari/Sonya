@@ -60,8 +60,8 @@ if ~isempty(idx_high) && idx_high > 1
     idx_high = idx_high + idx_max - 1;
     fchi = interp1(data.mag_dB(idx_high-1:idx_high), data.freq(idx_high-1:idx_high), target);
 else
-    fchi = NaN;
-    warning('High cutoff frequency not found.');
+    fchi = inf;
+    warning('High cutoff frequency out of measurement range.');
 end
 
 StdDev = std(AC_values);
@@ -81,7 +81,7 @@ Vmid = (Vmax + Vmin)/2;
 
 dy = diff(data.voltage) ./ diff(data.time);      % dV/dt
 [~, idx] = min(abs(data.voltage - Vmid));
-slew_rate = dy(idx) * 1e-6;  % Convert V/s -> V/μs
+slew_rate = abs(dy(idx)) * 1e-6;  % Convert V/s -> V/μs
 
 %% === TRAN: GedLee ===
 ged_file = fullfile(directory_name, 'gedlee.txt');
@@ -108,13 +108,7 @@ for k = 1:n_windows
     min_vals(k) = min(segment);
 end
 
-gm = gedlee_from_meas(min_vals, max_vals);
-
-% Optional: plot GedLee curve
-figure;
-plot([fliplr(min_vals), max_vals]);
-title('GedLee Transfer Curve');
-xlabel('Window Index'); ylabel('Voltage (V)');
+gm = gedlee_from_meas(min_vals, max_vals, 'plot', true);
 
 %% === Score Computation ===
 FVA = scoreAv(vaa,          target_Vaa);

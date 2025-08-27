@@ -105,10 +105,11 @@ function data = readREWScope(filename, varargin)
                 targetZC = 2*nPeriods + 1;   % => 5
                 if ~isempty(zc_rel)
                     k = min(targetZC, numel(zc_rel));
-                    start_idx = peak_idx + zc_rel(k);
+                    end_idx = peak_idx + zc_rel(k);
                 else
-                    start_idx = peak_idx;
+                    end_idx = peak_idx;
                 end
+                start_idx = end_idx-window_samples;
             otherwise
                 start_idx = 1;
         end

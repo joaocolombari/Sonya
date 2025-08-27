@@ -120,7 +120,7 @@ end
 gedlee_values = file2table_LTspice(1, [circuito slash 'circuit.log'], varNames{:});
 if any(~isnan(gedlee_values))
     step_success(4) = true;
-end
+    endgedlee
 gm = gedlee_from_meas(gedlee_values(1:2:end), gedlee_values(2:2:end));
 
 % === Score Computation ===
