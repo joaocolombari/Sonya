@@ -29,7 +29,7 @@ data = readREWScope(tran_file, 'window_ms', 100, 'trim_mode', 'zero');
 input_voltage = 10^(-1/2);              % -10dBV in RMS Volts
 output_voltage = rms(data.voltage);     
 gain_rms = output_voltage / input_voltage;
-output_power = output_voltage^2 / 6;    % 6Ω speaker
+output_power = output_voltage^2 / 6.15;    % 6Ω speaker
 gain_db = 20 * log10(gain_rms);
 
 % --- THD calculation ---
